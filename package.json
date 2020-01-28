@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "types": "index.d.ts",
-  "repository": "github:parzhitsky/retryable",
+  "repository": "github:parzh/retryable",
   "keywords": [
     "retryable",
     "retry",
@@ -12,9 +12,9 @@
   ],
   "author": "Dima Parzhitsky <parzhitsky@gmail.com>",
   "license": "MIT",
-  "homepage": "https://github.com/parzhitsky/retryable#readme",
+  "homepage": "https://github.com/parzh/retryable#readme",
   "bugs": {
-    "url": "https://github.com/parzhitsky/retryable/issues"
+    "url": "https://github.com/parzh/retryable/issues"
   },
   "scripts": {
     "test": "jest",
