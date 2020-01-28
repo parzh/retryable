@@ -24,7 +24,7 @@
     "test": "jest",
     "clean": "rimraf dist/*",
     "prebuild": "npm run clean",
-    "build": "tsc"
+    "build": "ncc build src/index.ts --out dist --minify"
   },
   "jest": {
     "preset": "ts-jest",
@@ -47,6 +47,7 @@
   "devDependencies": {
     "@types/jest": "25.1.0",
     "@types/node": "13.5.0",
+    "@zeit/ncc": "0.21.0",
     "jest": "25.1.0",
     "rimraf": "3.0.1",
     "ts-jest": "25.0.0",
