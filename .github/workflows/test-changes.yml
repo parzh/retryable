@@ -6,13 +6,14 @@ on:
       - "*"
 
 jobs:
-  unit-tests:
+  build:
     name: Run build
     runs-on: ubuntu-18.04
     steps:
       - run: npm ci
       - run: npm run build
 
+  unit-tests:
     name: Run unit tests
     runs-on: ubuntu-18.04
     steps:
