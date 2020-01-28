@@ -2,13 +2,13 @@
   "name": "@parzh/retryable",
   "version": "0.0.1",
   "description": "",
-  "main": "dist/index.js",
+  "main": "index.js",
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rimraf dist/*",
+    "clean": "rimraf index.js",
     "prebuild": "npm run clean",
-    "build": "ncc build src/index.ts --out dist --minify"
+    "build": "tsc"
   },
   "repository": "github:parzhitsky/retryable",
   "keywords": [],
@@ -20,7 +20,6 @@
   "homepage": "https://github.com/parzhitsky/retryable#readme",
   "devDependencies": {
     "@types/node": "13.5.0",
-    "@zeit/ncc": "0.21.0",
     "rimraf": "3.0.1",
     "typescript": "3.7.5"
   }

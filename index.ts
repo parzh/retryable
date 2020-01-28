@@ -18,13 +18,13 @@ export default function retryable(action: Action) {
 	let retryCount = 0;
 
 	return new Promise((resolve, reject) => {
+		function execute() {
+			action(resolve, reject, retry, retryCount);
+		}
+
 		function retry() {
 			++retryCount;
 			execute();
-		}
-
-		function execute() {
-			action(resolve, reject, retry, retryCount);
 		}
 
 		execute();

@@ -2,7 +2,6 @@
   "compilerOptions": {
     "module": "CommonJS",
     "target": "ES5",
-    "noEmit": false,
 
     "strict": true,
     "noUnusedLocals": true,
