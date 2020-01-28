@@ -40,7 +40,7 @@ export interface Action {
  * 	});
  * });
  */
-export default function retryable(action: Action) {
+export default function retryable(action: Action): Promise<unknown> {
 	let retryCount = 0;
 
 	return new Promise((resolve, reject) => {
