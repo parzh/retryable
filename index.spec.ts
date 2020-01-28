@@ -21,14 +21,16 @@ describe("retryable()", () => {
 		}
 	});
 
-	it("provides retryer, that allows retrying the action", async () => {
+	it("provides retryer together with current number of retries, that allows retrying the action", async () => {
 		const TARGET_VALUE = 10;
 
 		let value = 0;
 
 		const shouldRetry = () => value < TARGET_VALUE;
 
-		await retryable((resolve, _reject, retry) => {
+		await retryable((resolve, _reject, retry, retryCount) => {
+			expect(retryCount).toEqual(value);
+
 			value++;
 
 			if (shouldRetry())
