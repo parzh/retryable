@@ -1,5 +1,11 @@
 /** @private */
-type PromiseCallback<MethodName extends "then" | "catch"> = Parameters<Promise<any>[MethodName]>[0];
+type PromiseConstructorParameters = Parameters<ConstructorParameters<PromiseConstructor>[0]>;
+
+/** @private */
+type Resolver = PromiseConstructorParameters[0];
+
+/** @private */
+type Rejecter = PromiseConstructorParameters[1];
 
 export interface Retryer {
 	(): void;
@@ -7,8 +13,8 @@ export interface Retryer {
 
 export interface Action {
 	(
-		resolve: PromiseCallback<"then">,
-		reject: PromiseCallback<"catch">,
+		resolve: Resolver,
+		reject: Rejecter,
 		retry: Retryer,
 		retryCount: number,
 	): unknown;
