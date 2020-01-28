@@ -1,14 +1,18 @@
 {
   "compilerOptions": {
     "module": "CommonJS",
+    "lib": [ "ES2015" ],
     "target": "ES5",
+    "outDir": "dist",
     "declaration": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
 
     "strict": true,
     "noUnusedLocals": true,
     "forceConsistentCasingInFileNames": true,
   },
   "exclude": [
-    "*.spec.*"
+    "**/*.spec.*"
   ]
 }

@@ -2,8 +2,8 @@
   "name": "@parzh/retryable",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "repository": "github:parzh/retryable",
   "keywords": [
     "retryable",
@@ -22,7 +22,7 @@
   },
   "scripts": {
     "test": "jest",
-    "clean": "rimraf index.js",
+    "clean": "rimraf dist/*",
     "prebuild": "npm run clean",
     "build": "tsc"
   },
@@ -32,7 +32,7 @@
     "verbose": true,
     "rootDir": ".",
     "roots": [
-      "<rootDir>"
+      "<rootDir>/src"
     ],
     "testMatch": [
       "**/*.spec.ts"

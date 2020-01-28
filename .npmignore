@@ -4,6 +4,4 @@ node_modules
 .github
 
 # dev stuff
-*.spec.ts
-*.ts
-!*.d.ts
+src
