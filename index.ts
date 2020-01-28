@@ -14,6 +14,26 @@ export interface Action {
 	): unknown;
 }
 
+/**
+ * Retry action
+ * @param action Action to perform an retry if needed
+ * @example
+ * const content = await retryable((resolve, reject, retry, retryCount) => {
+ * 	if (!fs.existsSync("/path/to/file"))
+ * 		reject("File not found!");
+ * 
+ * 	else fs.readfile("/path/to/file", (err, data) => {
+ * 		if (!err)
+ * 			resolve(data);
+ *
+ * 		else if (retryCount >= MAX_RETRY_COUNT)
+ * 			reject("Max retry count reached!");
+ *
+ * 		else
+ * 			retry();
+ * 	});
+ * });
+ */
 export default function retryable(action: Action) {
 	let retryCount = 0;
 
