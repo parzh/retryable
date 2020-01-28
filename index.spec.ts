@@ -7,3 +7,15 @@ it("provides resolver, that works like Promise.resolve()", async () => {
 
 	expect(value).toBe(42);
 });
+
+it("provides rejecter, that works like Promise.reject()", async () => {
+	try {
+		await retryable((_resolve, reject) => {
+			reject("Unexpected error");
+		});
+
+		fail("Function did not throw");
+	} catch (error) {
+		expect(error).toContain("Unexpected error");
+	}
+});
