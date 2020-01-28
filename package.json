@@ -4,20 +4,24 @@
   "description": "",
   "main": "index.js",
   "private": true,
+  "repository": "github:parzhitsky/retryable",
+  "keywords": [
+    "retryable",
+    "retry",
+    "retryer"
+  ],
+  "author": "Dima Parzhitsky <parzhitsky@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/parzhitsky/retryable#readme",
+  "bugs": {
+    "url": "https://github.com/parzhitsky/retryable/issues"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rimraf index.js",
     "prebuild": "npm run clean",
     "build": "tsc"
   },
-  "repository": "github:parzhitsky/retryable",
-  "keywords": [],
-  "author": "Dima Parzhitsky <parzhitsky@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/parzhitsky/retryable/issues"
-  },
-  "homepage": "https://github.com/parzhitsky/retryable#readme",
   "devDependencies": {
     "@types/node": "13.5.0",
     "rimraf": "3.0.1",
