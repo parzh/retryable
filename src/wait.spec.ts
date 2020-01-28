@@ -1,10 +1,13 @@
 import wait from "./wait";
 
+/** @private */
+const WAIT_TIME = 1000;
+
 it("resolves after the specified amount of time", async () => {
 	const start = Date.now();
-	const finish = start + 1000;
+	const finish = start + WAIT_TIME;
 
-	await wait(1000);
+	await wait(WAIT_TIME);
 
 	expect(Date.now()).toBeCloseTo(finish);
-}, 1100);
+}, WAIT_TIME + 100);
