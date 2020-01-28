@@ -1,7 +1,7 @@
 import wait from "./wait";
 
 /** @private */
-const WAIT_TIME = 1000;
+const WAIT_TIME = 300;
 
 it("resolves after the specified amount of time", async () => {
 	const start = Date.now();
