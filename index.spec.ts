@@ -20,4 +20,24 @@ describe("retryable()", () => {
 			expect(error).toContain("Unexpected error");
 		}
 	});
+
+	it("provides retryer, that allows retrying the action", async () => {
+		const TARGET_VALUE = 10;
+
+		let value = 0;
+
+		const shouldRetry = () => value < TARGET_VALUE;
+
+		await retryable((resolve, _reject, retry) => {
+			value++;
+
+			if (shouldRetry())
+				retry();
+
+			else
+				resolve();
+		});
+
+		expect(value).toEqual(TARGET_VALUE);
+	}, 100);
 });
