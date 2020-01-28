@@ -1,0 +1,9 @@
+# auxilliary stuff
+node_modules
+.cache
+.github
+
+# dev stuff
+*.spec.ts
+*.ts
+!*.d.ts

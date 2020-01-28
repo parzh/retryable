@@ -1,4 +1,7 @@
+# auxilliary stuff
 node_modules
 .cache
+
+# npm-published stuff
 index.js
 *.d.ts
