@@ -17,14 +17,35 @@
     "url": "https://github.com/parzhitsky/retryable/issues"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "clean": "rimraf index.js",
     "prebuild": "npm run clean",
     "build": "tsc"
   },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "verbose": true,
+    "rootDir": ".",
+    "roots": [
+      "<rootDir>"
+    ],
+    "testMatch": [
+      "**/*.spec.ts"
+    ],
+    "transform": {
+      "\\.ts$": "ts-jest"
+    },
+    "restoreMocks": true,
+    "errorOnDeprecated": true,
+    "cacheDirectory": "<rootDir>/.cache/jest"
+  },
   "devDependencies": {
+    "@types/jest": "25.1.0",
     "@types/node": "13.5.0",
+    "jest": "25.1.0",
     "rimraf": "3.0.1",
+    "ts-jest": "25.0.0",
     "typescript": "3.7.5"
   }
 }
