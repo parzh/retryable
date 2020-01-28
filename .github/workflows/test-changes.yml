@@ -1,9 +1,6 @@
 name: Test changes
 
-on:
-  push:
-    branches:
-      - "*"
+on: push
 
 jobs:
   build:
