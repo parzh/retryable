@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "types": "index.d.ts",
-  "private": true,
   "repository": "github:parzhitsky/retryable",
   "keywords": [
     "retryable",
