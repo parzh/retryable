@@ -12,6 +12,9 @@
     "noUnusedLocals": true,
     "forceConsistentCasingInFileNames": true,
   },
+  "include": [
+    "src"
+  ],
   "exclude": [
     "**/*.spec.*"
   ]
