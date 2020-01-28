@@ -6,6 +6,6 @@
  */
 export default function wait(msec: number): Promise<void> {
 	return new Promise((resolve) => {
-		setTimeout(resolve, msec);
+		setTimeout(resolve, msec ?? 0);
 	});
 }

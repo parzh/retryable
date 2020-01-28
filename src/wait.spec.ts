@@ -19,3 +19,12 @@ it("resolves after the specified amount of time", async () => {
 
 	expect(seconds()).toBeCloseTo(finish);
 }, TIMEOUT_MARGIN + WAIT_TIME);
+
+it("resolves immediately (asynchronously) if no time is provided", async () => {
+	const start = seconds();
+
+	// @ts-ignore
+	await wait();
+
+	expect(seconds()).toBeCloseTo(start);
+}, TIMEOUT_MARGIN);
