@@ -1,3 +1,4 @@
 node_modules
 .cache
 index.js
+*.d.ts

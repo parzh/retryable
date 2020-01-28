@@ -2,9 +2,13 @@
   "compilerOptions": {
     "module": "CommonJS",
     "target": "ES5",
+    "declaration": true,
 
     "strict": true,
     "noUnusedLocals": true,
     "forceConsistentCasingInFileNames": true,
-  }
+  },
+  "exclude": [
+    "*.spec.*"
+  ]
 }
