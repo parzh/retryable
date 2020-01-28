@@ -10,8 +10,7 @@ const WAIT_TIME = 300;
 const seconds = (msec?: number): number => (msec ?? Date.now()) / MSEC_PER_SEC;
 
 it("resolves after the specified amount of time", async () => {
-	const start = Date.now();
-	const finish = seconds(start + WAIT_TIME);
+	const finish = seconds() + seconds(WAIT_TIME);
 
 	await wait(WAIT_TIME);
 
