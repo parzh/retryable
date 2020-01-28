@@ -7,8 +7,12 @@
   "repository": "github:parzh/retryable",
   "keywords": [
     "retryable",
+    "retryer",
+    "repeat",
+    "repeatable",
     "retry",
-    "retryer"
+    "retry count",
+    "retryCount"
   ],
   "author": "Dima Parzhitsky <parzhitsky@gmail.com>",
   "license": "MIT",
