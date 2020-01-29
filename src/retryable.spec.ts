@@ -42,4 +42,30 @@ describe("retryable()", () => {
 
 		expect(value).toEqual(TARGET_VALUE);
 	}, 100);
+
+	it("allows reseting the value of retry count back to the initial one", async () => {
+		const RETRIES_BEFORE_RESET = 5;
+		let didReset = false;
+
+		const lastRetryCount = await retryable<number>((resolve, _reject, retry, retryCount, resetRetryCount) => {
+			if (didReset)
+				resolve(retryCount);
+
+			else if (retryCount < RETRIES_BEFORE_RESET)
+				retry();
+
+			else {
+				didReset = true;
+				resetRetryCount();
+				retry();
+			}
+		});
+
+		expect(lastRetryCount).toBe(0);
+		expect(didReset).toBe(true);
+	});
+
+	it.todo("allows explicitly seting the value of retry count");
+
+	it.todo("enforces explicit value of retryCount to be a natural number");
 });
