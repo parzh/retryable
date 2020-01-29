@@ -5,7 +5,7 @@ Convenience function to retry executing an action, untill a desired result is ac
 ## Installation
 
 ```
-npm install --save @parzh/retryable
+npm i @parzh/retryable
 ```
 
 ```
