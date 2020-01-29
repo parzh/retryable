@@ -43,8 +43,10 @@ describe("retryable()", () => {
 		expect(value).toEqual(TARGET_VALUE);
 	}, 100);
 
+	/** @private */
+	const RETRIES_BEFORE_RESET = 5;
+
 	it("allows reseting the value of retry count back to the initial one", async () => {
-		const RETRIES_BEFORE_RESET = 5;
 		let didReset = false;
 
 		const lastRetryCount = await retryable<number>((resolve, _reject, retry, retryCount, resetRetryCount) => {
@@ -65,7 +67,26 @@ describe("retryable()", () => {
 		expect(didReset).toBe(true);
 	}, 100);
 
-	it.todo("allows explicitly seting the value of retry count");
+	it("allows explicitly seting the value of retry count", async () => {
+		let didReset = false;
+
+		const lastRetryCount = await retryable<number>((resolve, _reject, retry, retryCount, resetRetryCount) => {
+			if (didReset)
+				resolve(retryCount);
+
+			else if (retryCount < RETRIES_BEFORE_RESET)
+				retry();
+
+			else {
+				didReset = true;
+				resetRetryCount(15);
+				retry();
+			}
+		});
+
+		expect(lastRetryCount).toBe(15);
+		expect(didReset).toBe(true);
+	}, 100);
 
 	it.todo("enforces explicit value of retryCount to be a natural number");
 });
