@@ -24,7 +24,9 @@
     "test": "jest",
     "clean": "rimraf dist/*",
     "prebuild": "npm run clean",
-    "build": "ncc build src/index.ts --out dist --minify"
+    "build": "ncc build src/index.ts --out dist --minify",
+    "prepublishOnly": "npm ci && npm run build && npm test",
+    "postpublish": "git push --follow-tags"
   },
   "jest": {
     "preset": "ts-jest",
