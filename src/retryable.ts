@@ -14,7 +14,7 @@ const assertNatural = valuer.as<number>("primitive", "non-negative", "integer");
  * const content = await retryable((resolve, reject, retry, retryCount) => {
  * 	if (!fs.existsSync("/path/to/file"))
  * 		reject("File not found!");
- * 
+ *
  * 	else fs.readfile("/path/to/file", (err, data) => {
  * 		if (!err)
  * 			resolve(data);
@@ -29,12 +29,23 @@ const assertNatural = valuer.as<number>("primitive", "non-negative", "integer");
  */
 export default function retryable<Value>(action: Action): Promise<Value> {
 	let retryCount = RETRY_COUNT_DEFAULT;
+	let resettingRetryCountTo: number | null = null;
 
-	function resetRetryCount(retryCountNew = RETRY_COUNT_DEFAULT): void {
-		if (retryCountNew !== RETRY_COUNT_DEFAULT)
-			assertNatural(retryCountNew, "new value of retryCount");
+	function resetRetryCount(retryCountExplicit = RETRY_COUNT_DEFAULT): void {
+		if (retryCountExplicit !== RETRY_COUNT_DEFAULT)
+			assertNatural(retryCountExplicit, "new value of retryCount");
 
-		retryCount = retryCountNew;
+		resettingRetryCountTo = retryCountExplicit;
+	}
+
+	/** @private */
+	function updateRetryCount() {
+		if (resettingRetryCountTo != null) {
+			retryCount = resettingRetryCountTo;
+			resettingRetryCountTo = null;
+		} else {
+			retryCount += 1;
+		}
 	}
 
 	return new Promise((resolve, reject) => {
@@ -53,7 +64,7 @@ export default function retryable<Value>(action: Action): Promise<Value> {
 		}
 
 		function retry() {
-			++retryCount;
+			updateRetryCount();
 			execute();
 		}
 
