@@ -1,7 +1,11 @@
+import { valuer } from "@valuer/main";
 import Action from "./typings/action";
 
 /** @private */
 const RETRY_COUNT_DEFAULT = 0;
+
+/** @private */
+const assertNatural = valuer.as<number>("primitive", "non-negative", "integer");
 
 /**
  * Retry action
@@ -27,6 +31,9 @@ export default function retryable<Value>(action: Action): Promise<Value> {
 	let retryCount = RETRY_COUNT_DEFAULT;
 
 	function resetRetryCount(retryCountNew = RETRY_COUNT_DEFAULT): void {
+		if (retryCountNew !== RETRY_COUNT_DEFAULT)
+			assertNatural(retryCountNew, "new value of retryCount");
+
 		retryCount = retryCountNew;
 	}
 
