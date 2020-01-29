@@ -1,4 +1,11 @@
+import { valuer } from "@valuer/main";
 import Action from "./typings/action";
+
+/** @private */
+const RETRY_COUNT_DEFAULT = 0;
+
+/** @private */
+const assertNatural = valuer.as<number>("primitive", "non-negative", "integer");
 
 /**
  * Retry action
@@ -7,7 +14,7 @@ import Action from "./typings/action";
  * const content = await retryable((resolve, reject, retry, retryCount) => {
  * 	if (!fs.existsSync("/path/to/file"))
  * 		reject("File not found!");
- * 
+ *
  * 	else fs.readfile("/path/to/file", (err, data) => {
  * 		if (!err)
  * 			resolve(data);
@@ -21,7 +28,25 @@ import Action from "./typings/action";
  * });
  */
 export default function retryable<Value>(action: Action): Promise<Value> {
-	let retryCount = 0;
+	let retryCount = RETRY_COUNT_DEFAULT;
+	let resettingRetryCountTo: number | null = null;
+
+	function resetRetryCount(retryCountExplicit = RETRY_COUNT_DEFAULT): void {
+		if (retryCountExplicit !== RETRY_COUNT_DEFAULT)
+			assertNatural(retryCountExplicit, "new value of retryCount");
+
+		resettingRetryCountTo = retryCountExplicit;
+	}
+
+	/** @private */
+	function updateRetryCount() {
+		if (resettingRetryCountTo != null) {
+			retryCount = resettingRetryCountTo;
+			resettingRetryCountTo = null;
+		} else {
+			retryCount += 1;
+		}
+	}
 
 	return new Promise((resolve, reject) => {
 		function execute() {
@@ -34,11 +59,12 @@ export default function retryable<Value>(action: Action): Promise<Value> {
 				reject,
 				retry,
 				retryCount,
+				resetRetryCount,
 			);
 		}
 
 		function retry() {
-			++retryCount;
+			updateRetryCount();
 			execute();
 		}
 
