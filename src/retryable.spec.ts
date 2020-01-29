@@ -88,5 +88,27 @@ describe("retryable()", () => {
 		expect(didReset).toBe(true);
 	}, 100);
 
-	it.todo("enforces explicit value of retryCount to be a natural number");
+	it("forbids explicit values of retryCount being negative numbers", async () => {
+		try {
+			await retryable((_resolve, _reject, _retry, _retryCount, resetRetryCount) => {
+				resetRetryCount(-14);
+			});
+
+			fail("Function did not throw");
+		} catch (error) {
+			expect(String(error)).toContain("should not be a negative number");
+		}
+	});
+
+	it("forbids explicit values of retryCount being non-integers", async () => {
+		try {
+			await retryable((_resolve, _reject, _retry, _retryCount, resetRetryCount) => {
+				resetRetryCount(42.17);
+			});
+
+			fail("Function did not throw");
+		} catch (error) {
+			expect(String(error)).toContain("is not an integer");
+		}
+	});
 });
