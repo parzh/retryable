@@ -20,12 +20,21 @@ import Action from "./typings/action";
  * 	});
  * });
  */
-export default function retryable(action: Action): Promise<unknown> {
+export default function retryable<Value>(action: Action): Promise<Value> {
 	let retryCount = 0;
 
 	return new Promise((resolve, reject) => {
 		function execute() {
-			action(resolve, reject, retry, retryCount);
+			action(
+				// @ts-ignore
+				// FIXME: cannot use type-checking here
+				// due to TypeScript design limitations
+				// see https://github.com/microsoft/TypeScript/issues/32254
+				resolve,
+				reject,
+				retry,
+				retryCount,
+			);
 		}
 
 		function retry() {
