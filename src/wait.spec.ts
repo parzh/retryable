@@ -1,7 +1,7 @@
 import wait from "./wait";
 
 /** @private */
-const MSEC_PER_SEC = 1000;
+const PRECISION = 10 * 1000; // 10 seconds
 
 /** @private */
 const WAIT_TIME = 300;
@@ -10,7 +10,7 @@ const WAIT_TIME = 300;
 const TIMEOUT_MARGIN = 100;
 
 /** @private */
-const seconds = (msec?: number): number => Math.floor((msec ?? Date.now()) / MSEC_PER_SEC);
+const seconds = (msec?: number): number => (msec ?? Date.now()) / PRECISION;
 
 it("resolves after the specified amount of time", async () => {
 	const finish = seconds() + seconds(WAIT_TIME);
