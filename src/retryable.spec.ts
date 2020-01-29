@@ -63,7 +63,7 @@ describe("retryable()", () => {
 
 		expect(lastRetryCount).toBe(0);
 		expect(didReset).toBe(true);
-	});
+	}, 100);
 
 	it.todo("allows explicitly seting the value of retry count");
 
