@@ -1,5 +1,8 @@
 import Action from "./typings/action";
 
+/** @private */
+const RETRY_COUNT_DEFAULT = 0;
+
 /**
  * Retry action
  * @param action Action to perform an retry if needed
@@ -21,7 +24,11 @@ import Action from "./typings/action";
  * });
  */
 export default function retryable<Value>(action: Action): Promise<Value> {
-	let retryCount = 0;
+	let retryCount = RETRY_COUNT_DEFAULT;
+
+	function resetRetryCount(retryCountNew = RETRY_COUNT_DEFAULT): void {
+		retryCount = retryCountNew;
+	}
 
 	return new Promise((resolve, reject) => {
 		function execute() {
@@ -34,6 +41,7 @@ export default function retryable<Value>(action: Action): Promise<Value> {
 				reject,
 				retry,
 				retryCount,
+				resetRetryCount,
 			);
 		}
 
