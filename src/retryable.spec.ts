@@ -1,4 +1,4 @@
-import retryable from "./index";
+import retryable from "./retryable";
 
 describe("retryable()", () => {
 	it("provides resolver, that works like Promise.resolve()", async () => {
