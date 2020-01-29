@@ -1,11 +1,17 @@
-# retryable
+<p align="center">
+	<a href="https://github.com/parzh/retryable/actions?query=workflow%3A%22Test+changes%22">
+		<img src="https://github.com/parzh/retryable/workflows/Test%20changes/badge.svg" />
+	</a>
+</p>
+
+# @parzh/retryable
 
 Convenience function to retry executing an action, untill a desired result is achieved
 
 ## Installation
 
 ```
-npm install --save @parzh/retryable
+npm i @parzh/retryable
 ```
 
 ```
