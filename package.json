@@ -37,7 +37,7 @@
       "<rootDir>/src"
     ],
     "testMatch": [
-      "**/*.spec.ts"
+      "**/*.spec.[jt]s"
     ],
     "transform": {
       "\\.ts$": "ts-jest"
