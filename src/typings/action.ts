@@ -6,7 +6,7 @@ import RetryCountResetter from "./retry-count-resetter";
 export default interface Action<Value = unknown> {
 	(
 		resolve: Resolver<Value>,
-		rejecte: Rejecter,
+		reject: Rejecter,
 		retry: Retryer,
 		retryCount: number,
 		resetRetryCount: RetryCountResetter,
