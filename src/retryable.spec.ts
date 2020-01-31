@@ -11,7 +11,7 @@ describe("retryable()", () => {
 
 	it("provides rejecter, that works like Promise.reject()", async () => {
 		try {
-			await retryable((_resolve, reject) => {
+			await retryable((resolve, reject) => {
 				reject("Unexpected error");
 			});
 
@@ -28,7 +28,7 @@ describe("retryable()", () => {
 
 		const shouldRetry = () => value < TARGET_VALUE;
 
-		await retryable((resolve, _reject, retry, retryCount) => {
+		await retryable((resolve, reject, retry, retryCount) => {
 			expect(retryCount).toEqual(value);
 
 			value++;
@@ -49,7 +49,7 @@ describe("retryable()", () => {
 	it("allows reseting the value of retry count back to the initial one", async () => {
 		let didReset = false;
 
-		const lastRetryCount = await retryable<number>((resolve, _reject, retry, retryCount, resetRetryCount) => {
+		const lastRetryCount = await retryable<number>((resolve, reject, retry, retryCount, resetRetryCount) => {
 			if (didReset)
 				resolve(retryCount);
 
@@ -70,7 +70,7 @@ describe("retryable()", () => {
 	it("allows explicitly seting the value of retry count", async () => {
 		let didReset = false;
 
-		const lastRetryCount = await retryable<number>((resolve, _reject, retry, retryCount, resetRetryCount) => {
+		const lastRetryCount = await retryable<number>((resolve, reject, retry, retryCount, resetRetryCount) => {
 			if (didReset)
 				resolve(retryCount);
 
@@ -90,7 +90,7 @@ describe("retryable()", () => {
 
 	it("forbids explicit values of retryCount being negative numbers", async () => {
 		try {
-			await retryable((_resolve, _reject, _retry, _retryCount, resetRetryCount) => {
+			await retryable((resolve, reject, retry, retryCount, resetRetryCount) => {
 				resetRetryCount(-14);
 			});
 
@@ -102,7 +102,7 @@ describe("retryable()", () => {
 
 	it("forbids explicit values of retryCount being non-integers", async () => {
 		try {
-			await retryable((_resolve, _reject, _retry, _retryCount, resetRetryCount) => {
+			await retryable((resolve, reject, retry, retryCount, resetRetryCount) => {
 				resetRetryCount(42.17);
 			});
 
