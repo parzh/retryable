@@ -1,8 +1,9 @@
 import PromiseConstructorParameters from "./.promise-constructor-parameters";
 
-/** @public */
-type Resolver =
+export type ResolverLegacy =
 	| PromiseConstructorParameters[0];
 	;
 
-export default Resolver;
+export default interface Resolver<Value = unknown> {
+	(value?: Value | PromiseLike<Value>): void;
+}
