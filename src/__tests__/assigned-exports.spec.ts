@@ -1,7 +1,7 @@
 import retryable = require("..");
 
 /** @private */
-const ___ = typeof (null as any);
+const ___ = typeof null;
 
 /** @private */
 type TypeOf = typeof ___;
