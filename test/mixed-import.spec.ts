@@ -1,5 +1,5 @@
-import module_, { retryable, wait } from ".";
-import TypeOf from "./typeof.type";
+import module_, { retryable, wait } from "../src";
+import TypeOf from "./helpers/typeof.type";
 
 describe('import retryable from "@parzh/retryable"', () => {
 	it("imports the whole module", () => {
