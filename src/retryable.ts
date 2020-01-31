@@ -27,7 +27,7 @@ const assertNatural = valuer.as<number>("primitive", "non-negative", "integer");
  * 	});
  * });
  */
-export default function retryable<Value>(action: Action): Promise<Value> {
+export default function retryable<Value = unknown>(action: Action): Promise<Value> {
 	let retryCount = RETRY_COUNT_DEFAULT;
 	let resettingRetryCountTo: number | null = null;
 
@@ -48,7 +48,7 @@ export default function retryable<Value>(action: Action): Promise<Value> {
 		}
 	}
 
-	return new Promise((resolve, reject) => {
+	return new Promise<Value>((resolve, reject) => {
 		function execute() {
 			action(
 				// @ts-ignore
