@@ -21,7 +21,7 @@ yarn add @parzh/retryable
 ## Usage
 
 ```js
-const content = await retryable<Buffer>((resolve, reject, retry, retryCount, resetRetryCount) => {
+const content: Buffer = await retryable<Buffer>((resolve, reject, retry, retryCount, resetRetryCount) => {
 	if (!fs.existsSync("/path/to/file"))
 		reject("File not found!");
 

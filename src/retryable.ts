@@ -11,7 +11,7 @@ const assertNatural = valuer.as<number>("primitive", "non-negative", "integer");
  * Retry action
  * @param action Action to perform an retry if needed
  * @example
- * const content = await retryable((resolve, reject, retry, retryCount) => {
+ * const content: Buffer = await retryable<Buffer>((resolve, reject, retry, retryCount, resetRetryCount) => {
  * 	if (!fs.existsSync("/path/to/file"))
  * 		reject("File not found!");
  *
