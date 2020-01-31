@@ -1,4 +1,4 @@
-import retryable = require("..");
+import retryable = require(".");
 import TypeOf from "./typeof.type";
 
 describe('import retryable = require("..")', () => {

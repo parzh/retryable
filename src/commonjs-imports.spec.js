@@ -1,5 +1,5 @@
 // @ts-check
-const module_ = require("..");
+const module_ = require(".");
 
 describe('const retryable = require("@parzh/retryable")', () => {
 	it("imports the whole module", () => {
