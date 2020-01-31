@@ -23,6 +23,14 @@ describe("retry.count", () => {
 		expect(value).toEqual(TARGET_VALUE);
 	}, 100);
 
+	it("is a readonly value", () => {
+		const promise = retryable((resolve, reject, retry) => {
+			// @ts-ignore
+			retry.count = 42;
+		});
+
+		expect(promise).rejects.toMatch("Cannot set readonly");
+	});
 });
 
 describe("retryCount", () => {

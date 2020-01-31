@@ -1,5 +1,12 @@
 import { valuer } from "@valuer/main";
 import Action from "./typings/action";
+import Retryer from "./typings/retryer";
+
+/** @private */
+interface Private {
+	retryCount: number;
+	resettingRetryCountTo: number | null;
+}
 
 /** @private */
 const RETRY_COUNT_DEFAULT = 0;
@@ -44,7 +51,10 @@ const assertNatural = valuer.as<number>("primitive", "non-negative", "integer");
  */
 export default function retryable<Value = unknown>(action: Action<Value>): Promise<Value> {
 	/** @private */
-	let resettingRetryCountTo: number | null = null;
+	const __: Private = {
+		retryCount: RETRY_COUNT_DEFAULT,
+		resettingRetryCountTo: null,
+	};
 
 	function resetRetryCount(argumentRequired: boolean, retryCountExplicit = RETRY_COUNT_DEFAULT): void {
 		if (!argumentRequired)
@@ -53,7 +63,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		if (retryCountExplicit !== RETRY_COUNT_DEFAULT)
 			assertNatural(retryCountExplicit, "new value of retryCount");
 
-		resettingRetryCountTo = retryCountExplicit;
+		__.resettingRetryCountTo = retryCountExplicit;
 	}
 
 	return new Promise<Value>((resolve, reject) => {
@@ -62,10 +72,10 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			action(
 				resolve,
 				reject,
-				retry,
+				retry as Retryer,
 
 				/** @deprecated Use `count` property of the `retry` argument */
-				retry.count,
+				__.retryCount,
 
 				/** @deprecated Use `setCount` property of the `retry` argument */
 				retry.resetCount,
@@ -74,11 +84,11 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 
 		/** @private */
 		function updateRetryCount() {
-			if (resettingRetryCountTo != null) {
-				retry.count = resettingRetryCountTo;
-				resettingRetryCountTo = null;
+			if (__.resettingRetryCountTo != null) {
+				__.retryCount = __.resettingRetryCountTo;
+				__.resettingRetryCountTo = null;
 			} else {
-				retry.count += 1;
+				__.retryCount += 1;
 			}
 		}
 
@@ -87,7 +97,16 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			execute();
 		}
 
-		retry.count = RETRY_COUNT_DEFAULT;
+		Object.defineProperty(retry, "count", {
+			get(): number {
+				return __.retryCount;
+			},
+
+			set(): never {
+				return reject("Cannot set readonly `count`; use `retry.setCount()` instead") as never;
+			},
+		});
+
 		retry.setCount = resetRetryCount.bind(null, true);
 
 		/** @deprecated Use `retry.setCount` */
