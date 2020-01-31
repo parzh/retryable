@@ -1,11 +1,11 @@
-import retryable from "./retryable";
-import { time, TIMEOUT_MARGIN, SECOND } from "./time-test-helpers";
+import retryable from "../src/retryable";
+import { time, TIMEOUT_MARGIN, WAIT_TIME } from "./helpers/time";
 
 describe("retry.after()", () => {
 	it("allows retrying after a specified delay", async () => {
 		let retried = false;
 
-		const finish = time() + time(SECOND);
+		const finish = time() + time(WAIT_TIME);
 
 		await retryable((resolve, reject, retry) => {
 			if (retried)
@@ -14,11 +14,11 @@ describe("retry.after()", () => {
 			else {
 				retried = true;
 
-				retry.after(SECOND);
+				retry.after(WAIT_TIME);
 			}
 		});
 
 		expect(time()).toBeCloseTo(finish);
 		expect(retried).toBe(true);
-	}, TIMEOUT_MARGIN + SECOND);
+	}, TIMEOUT_MARGIN + WAIT_TIME);
 });

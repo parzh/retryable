@@ -2,6 +2,7 @@
 node_modules
 .cache
 .github
+dist/*.tsbuildinfo
 
 # dev stuff
 src

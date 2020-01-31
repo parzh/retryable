@@ -1,4 +1,4 @@
-import PromiseConstructorParameters from "./.promise-constructor-parameters";
+import PromiseConstructorParameters from "./promise-constructor-parameters";
 
 /** @public */
 type Rejecter =

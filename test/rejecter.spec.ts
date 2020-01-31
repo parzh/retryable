@@ -1,4 +1,4 @@
-import retryable from "./retryable";
+import retryable from "../src/retryable";
 
 describe("reject()", () => {
 	it("works like Promise.reject()", async () => {

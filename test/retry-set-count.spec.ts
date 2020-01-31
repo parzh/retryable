@@ -1,5 +1,5 @@
-import retryable from "./retryable";
-import { TIMEOUT_MARGIN } from "./time-test-helpers";
+import retryable from "../src/retryable";
+import { TIMEOUT_MARGIN } from "./helpers/time";
 
 /** @private */
 const RETRIES_BEFORE_RESET = 5;

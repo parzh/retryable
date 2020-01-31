@@ -34,7 +34,7 @@
     "verbose": true,
     "rootDir": ".",
     "roots": [
-      "<rootDir>/src"
+      "<rootDir>/test"
     ],
     "testMatch": [
       "**/*.spec.[jt]s"
