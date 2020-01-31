@@ -43,7 +43,7 @@ const assertNatural = valuer.as<number>("primitive", "non-negative", "integer");
  * });
  */
 export default function retryable<Value = unknown>(action: Action<Value>): Promise<Value> {
-	let retryCount = RETRY_COUNT_DEFAULT;
+	/** @private */
 	let resettingRetryCountTo: number | null = null;
 
 	function resetRetryCount(retryCountExplicit = RETRY_COUNT_DEFAULT): void {
@@ -53,35 +53,34 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		resettingRetryCountTo = retryCountExplicit;
 	}
 
-	/** @private */
-	function updateRetryCount() {
-		if (resettingRetryCountTo != null) {
-			retryCount = resettingRetryCountTo;
-			resettingRetryCountTo = null;
-		} else {
-			retryCount += 1;
-		}
-	}
-
 	return new Promise<Value>((resolve, reject) => {
 		function execute() {
 			action(
 				resolve,
 				reject,
 				retry,
-
-				/** @deprecated */
-				retryCount,
-
-				/** @deprecated */
-				resetRetryCount,
+				retry.count,
+				retry.resetCount,
 			);
+		}
+
+		/** @private */
+		function updateRetryCount() {
+			if (resettingRetryCountTo != null) {
+				retry.count = resettingRetryCountTo;
+				resettingRetryCountTo = null;
+			} else {
+				retry.count += 1;
+			}
 		}
 
 		function retry() {
 			updateRetryCount();
 			execute();
 		}
+
+		retry.count = RETRY_COUNT_DEFAULT;
+		retry.resetCount = resetRetryCount;
 
 		execute();
 	});

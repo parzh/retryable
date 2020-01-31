@@ -4,15 +4,15 @@ import Retryer from "./retryer";
 import RetryCountResetter from "./retry-count-resetter";
 
 export default interface Action<Value = unknown> {
+	/**
+	 * @param retryCount Deprecated. Use `retry.count`
+	 * @param resetRetryCount Deprecated. Use `retry.resetCount`
+	 */
 	(
 		resolve: Resolver<Value>,
 		reject: Rejecter,
 		retry: Retryer,
-
-		/** @deprecated */
 		retryCount: number,
-
-		/** @deprecated */
 		resetRetryCount: RetryCountResetter,
 	): unknown;
 }
