@@ -34,7 +34,7 @@ describe("retry.setCount()", () => {
 
 			fail("Function did not throw");
 		} catch (error) {
-			expect(String(error)).toContain("should not be a negative number");
+			expect(error.message).toContain("a negative number");
 		}
 	});
 
@@ -46,7 +46,7 @@ describe("retry.setCount()", () => {
 
 			fail("Function did not throw");
 		} catch (error) {
-			expect(String(error)).toContain("is not an integer");
+			expect(error.message).toContain("not an integer");
 		}
 	});
 });

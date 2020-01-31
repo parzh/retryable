@@ -1,7 +1,7 @@
 import retryable = require(".");
 import TypeOf from "./typeof.type";
 
-describe('import retryable = require("..")', () => {
+describe('import retryable = require("@parzh/retryable")', () => {
 	it("imports the whole module", () => {
 		expect(retryable).toHaveProperty("retryable");
 		expect(retryable).toHaveProperty("wait");
