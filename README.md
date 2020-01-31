@@ -32,7 +32,7 @@ const content = await retryable((resolve, reject, retry) => {
       if (SHOULD_IGNORE_RETRY_LIMIT)
         // retry limit reached
         // retry limit is ignored
-        retry.resetCount();
+        retry.setCount(0);
 
       else
         // retry limit reached

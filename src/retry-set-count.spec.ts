@@ -51,10 +51,6 @@ describe("retry.setCount()", () => {
 	});
 });
 
-describe("retry.resetCount()", () => {
-	it.todo("is deprecated in favor of `retry.setCount(0)`");
-});
-
 describe("resetRetryCount()", () => {
 	it.todo("is deprecated in favor of `retry.setCount(0)`");
 });

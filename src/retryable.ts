@@ -30,7 +30,7 @@ const assertNatural = valuer.as<number>("primitive", "non-negative", "integer");
  *       if (SHOULD_IGNORE_RETRY_LIMIT)
  *         // retry limit reached
  *         // retry limit is ignored
- *         retry.resetCount();
+ *         retry.setCount(0);
  *
  *       else
  *         // retry limit reached
@@ -78,7 +78,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 				__.retryCount,
 
 				/** @deprecated Use `setCount` property of the `retry` argument */
-				retry.resetCount,
+				resetRetryCount.bind(null, false),
 			);
 		}
 
@@ -114,9 +114,6 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		retry.after = retryAfter;
 
 		retry.setCount = resetRetryCount.bind(null, true);
-
-		/** @deprecated Use `retry.setCount` */
-		retry.resetCount = resetRetryCount.bind(null, false);
 
 		execute();
 	});

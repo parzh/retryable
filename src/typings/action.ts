@@ -12,6 +12,6 @@ export default interface Action<Value = unknown> {
 		retryCount: number,
 
 		/** @deprecated Use `retry.setCount(0)` */
-		resetRetryCount: Retryer["resetCount"],
+		resetRetryCount: (msec?: number) => void,
 	): unknown;
 }
