@@ -1,4 +1,5 @@
 import retryable from "./retryable";
+import { TIMEOUT_MARGIN } from "./time-test-helpers";
 
 describe("retry.count", () => {
 	it("provides current number of retries so far", async () => {
@@ -21,7 +22,7 @@ describe("retry.count", () => {
 		});
 
 		expect(value).toEqual(TARGET_VALUE);
-	}, 100);
+	}, TIMEOUT_MARGIN);
 
 	it("is a readonly value", () => {
 		const promise = retryable((resolve, reject, retry) => {
