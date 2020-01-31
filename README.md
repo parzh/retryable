@@ -27,7 +27,8 @@ const content = await retryable((resolve, reject, retry) => {
       // no errors occured
       return resolve(data);
 
-    // Here: an error occured
+    // otherwise: an error occured
+
     if (retry.count >= RETRY_LIMIT)
       if (SHOULD_IGNORE_RETRY_LIMIT)
         // retry limit reached
@@ -39,7 +40,8 @@ const content = await retryable((resolve, reject, retry) => {
         // retry limit is respected
         return reject("Retry limit reached!");
 
-    // Here: retry limit is not reached or ignored
+    // otherwise: retry limit is not reached or ignored
+
     if (SHOULD_RETRY_IMMEDIATELY)
       // retrying immediately
       retry();
