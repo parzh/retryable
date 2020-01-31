@@ -1,4 +1,4 @@
-import PromiseConstructorParameters from "./.promise-constructor-parameters";
+import PromiseConstructorParameters from "./promise-constructor-parameters";
 
 /** @deprecated Consider using `Resolver<unknown>` instead */
 export type ResolverLegacy =
