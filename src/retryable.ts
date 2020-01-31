@@ -97,6 +97,10 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			execute();
 		}
 
+		function retryAfter(msec: number): void {
+			setTimeout(retry, msec);
+		}
+
 		Object.defineProperty(retry, "count", {
 			get(): number {
 				return __.retryCount;
@@ -106,6 +110,8 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 				return reject("Cannot set readonly `count`; use `retry.setCount()` instead") as never;
 			},
 		});
+
+		retry.after = retryAfter;
 
 		retry.setCount = resetRetryCount.bind(null, true);
 
