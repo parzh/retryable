@@ -12,36 +12,34 @@ const assertNatural = valuer.as<number>("primitive", "non-negative", "integer");
  * @param action Action to perform an retry if needed
  * @example
  * const content = await retryable((resolve, reject, retry) => {
- * 	fs.readfile("/path/to/file", (err, data) => {
- * 		if (!err)
- * 			// no errors occured
- * 			return resolve(data);
- * 
- * 		if (retry.count >= MAX_RETRY_COUNT)
- * 			if (SHOULD_IGNORE_RETRY_LIMIT)
- * 				// an error occured
- * 				// retry limit reached
- * 				// retry limit is ignored
- * 				retry.resetCount();
+ *   fs.readfile("/path/to/file", (err, data) => {
+ *     if (!err)
+ *       // no errors occured
+ *       return resolve(data);
  *
- * 			else 
- * 				// an error occured
- * 				// retry limit reached
- * 				// retry limit is respected
- * 				return reject("Max retry count reached!");
+ *     // Here: an error occured
  *
- * 		if (SHOULD_RETRY_IMMEDIATELY)
- * 			// an error occured
- * 			// retry limit is not reached or ignored
- * 			// retrying immediately
- * 			retry();
+ *     if (retry.count >= RETRY_LIMIT)
+ *       if (SHOULD_IGNORE_RETRY_LIMIT)
+ *         // retry limit reached
+ *         // retry limit is ignored
+ *         retry.resetCount();
  *
- * 		else
- * 			// an error occured
- * 			// retry limit is not reached or ignored
- * 			// retrying after 2^retries × 100 milliseconds
- * 			retry.after(2 ** retry.count * 100);
- * 	});
+ *       else
+ *         // retry limit reached
+ *         // retry limit is respected
+ *         return reject("Retry limit reached!");
+ *
+ *     // Here: retry limit is not reached or ignored
+ *
+ *     if (SHOULD_RETRY_IMMEDIATELY)
+ *       // retrying immediately
+ *       retry();
+ *
+ *     else
+ *       // retrying after {2^retries × 100} milliseconds
+ *       retry.after(2 ** retry.count * 100);
+ *   });
  * });
  */
 export default function retryable<Value = unknown>(action: Action<Value>): Promise<Value> {

@@ -22,35 +22,31 @@ yarn add @parzh/retryable
 
 ```js
 const content = await retryable((resolve, reject, retry) => {
-	fs.readfile("/path/to/file", (err, data) => {
-		if (!err)
-			// no errors occured
-			return resolve(data);
+  fs.readfile("/path/to/file", (err, data) => {
+    if (!err)
+      // no errors occured
+      return resolve(data);
 
-		if (retry.count >= MAX_RETRY_COUNT)
-			if (SHOULD_IGNORE_RETRY_LIMIT)
-				// an error occured
-				// retry limit reached
-				// retry limit is ignored
-				retry.resetCount();
+    // Here: an error occured
+    if (retry.count >= RETRY_LIMIT)
+      if (SHOULD_IGNORE_RETRY_LIMIT)
+        // retry limit reached
+        // retry limit is ignored
+        retry.resetCount();
 
-			else 
-				// an error occured
-				// retry limit reached
-				// retry limit is respected
-				return reject("Max retry count reached!");
+      else
+        // retry limit reached
+        // retry limit is respected
+        return reject("Retry limit reached!");
 
-		if (SHOULD_RETRY_IMMEDIATELY)
-			// an error occured
-			// retry limit is not reached or ignored
-			// retrying immediately
-			retry();
+    // Here: retry limit is not reached or ignored
+    if (SHOULD_RETRY_IMMEDIATELY)
+      // retrying immediately
+      retry();
 
-		else
-			// an error occured
-			// retry limit is not reached or ignored
-			// retrying after 2^retries × 100 milliseconds
-			retry.after(2 ** retry.count * 100);
-	});
+    else
+      // retrying after {2^retries × 100} milliseconds
+      retry.after(2 ** retry.count * 100);
+  });
 });
 ```
