@@ -11,7 +11,7 @@ const assertNatural = valuer.as<number>("primitive", "non-negative", "integer");
  * Retry action
  * @param action Action to perform an retry if needed
  * @example
- * const content = await retryable((resolve, reject, retry, retryCount) => {
+ * const content: Buffer = await retryable<Buffer>((resolve, reject, retry, retryCount, resetRetryCount) => {
  * 	if (!fs.existsSync("/path/to/file"))
  * 		reject("File not found!");
  *
@@ -27,7 +27,7 @@ const assertNatural = valuer.as<number>("primitive", "non-negative", "integer");
  * 	});
  * });
  */
-export default function retryable<Value>(action: Action): Promise<Value> {
+export default function retryable<Value = unknown>(action: Action<Value>): Promise<Value> {
 	let retryCount = RETRY_COUNT_DEFAULT;
 	let resettingRetryCountTo: number | null = null;
 
@@ -48,13 +48,9 @@ export default function retryable<Value>(action: Action): Promise<Value> {
 		}
 	}
 
-	return new Promise((resolve, reject) => {
+	return new Promise<Value>((resolve, reject) => {
 		function execute() {
 			action(
-				// @ts-ignore
-				// FIXME: cannot use type-checking here
-				// due to TypeScript design limitations
-				// see https://github.com/microsoft/TypeScript/issues/32254
 				resolve,
 				reject,
 				retry,
