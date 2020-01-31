@@ -1,10 +1,5 @@
 import module_, { retryable, wait } from "..";
-
-/** @private */
-const ___ = typeof null;
-
-/** @private */
-type TypeOf = typeof ___;
+import TypeOf from "./typeof.type";
 
 describe('import retryable from "@parzh/retryable"', () => {
 	it("imports the whole module", () => {

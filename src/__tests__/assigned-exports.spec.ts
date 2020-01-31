@@ -1,10 +1,5 @@
 import retryable = require("..");
-
-/** @private */
-const ___ = typeof null;
-
-/** @private */
-type TypeOf = typeof ___;
+import TypeOf from "./typeof.type";
 
 describe('import retryable = require("..")', () => {
 	it("imports the whole module", () => {
