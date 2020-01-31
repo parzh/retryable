@@ -1,4 +1,4 @@
-import module_, { retryable, wait } from "..";
+import module_, { retryable, wait } from ".";
 import TypeOf from "./typeof.type";
 
 describe('import retryable from "@parzh/retryable"', () => {

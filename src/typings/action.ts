@@ -1,14 +1,17 @@
 import Resolver from "./resolver";
 import Rejecter from "./rejecter";
 import Retryer from "./retryer";
-import RetryCountResetter from "./retry-count-resetter";
 
 export default interface Action<Value = unknown> {
 	(
 		resolve: Resolver<Value>,
-		rejecte: Rejecter,
+		reject: Rejecter,
 		retry: Retryer,
+
+		/** @deprecated Use `retry.count` */
 		retryCount: number,
-		resetRetryCount: RetryCountResetter,
+
+		/** @deprecated Use `retry.setCount(0)` */
+		resetRetryCount: (msec?: number) => void,
 	): unknown;
 }

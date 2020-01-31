@@ -21,19 +21,32 @@ yarn add @parzh/retryable
 ## Usage
 
 ```js
-const content: Buffer = await retryable<Buffer>((resolve, reject, retry, retryCount, resetRetryCount) => {
-	if (!fs.existsSync("/path/to/file"))
-		reject("File not found!");
+const content = await retryable((resolve, reject, retry) => {
+  fs.readfile("/path/to/file", (err, data) => {
+    if (!err)
+      // no errors occured
+      return resolve(data);
 
-	else fs.readfile("/path/to/file", (err, data) => {
-		if (!err)
-			resolve(data);
+    // Here: an error occured
+    if (retry.count >= RETRY_LIMIT)
+      if (SHOULD_IGNORE_RETRY_LIMIT)
+        // retry limit reached
+        // retry limit is ignored
+        retry.setCount(0);
 
-		else if (retryCount >= MAX_RETRY_COUNT)
-			reject("Max retry count reached!");
+      else
+        // retry limit reached
+        // retry limit is respected
+        return reject("Retry limit reached!");
 
-		else
-			retry();
-	});
+    // Here: retry limit is not reached or ignored
+    if (SHOULD_RETRY_IMMEDIATELY)
+      // retrying immediately
+      retry();
+
+    else
+      // retrying after {2^retries × 100} milliseconds
+      retry.after(2 ** retry.count * 100);
+  });
 });
 ```
