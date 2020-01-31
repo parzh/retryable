@@ -60,7 +60,11 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 				resolve,
 				reject,
 				retry,
+
+				/** @deprecated Use `count` property of the `retry` argument */
 				retry.count,
+
+				/** @deprecated Use `setCount` property of the `retry` argument */
 				retry.resetCount,
 			);
 		}
@@ -81,6 +85,9 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		}
 
 		retry.count = RETRY_COUNT_DEFAULT;
+		retry.setCount = resetRetryCount;
+
+		/** @deprecated Use `retry.setCount` */
 		retry.resetCount = resetRetryCount;
 
 		execute();
