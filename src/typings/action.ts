@@ -8,7 +8,11 @@ export default interface Action<Value = unknown> {
 		resolve: Resolver<Value>,
 		reject: Rejecter,
 		retry: Retryer,
+
+		/** @deprecated */
 		retryCount: number,
+
+		/** @deprecated */
 		resetRetryCount: RetryCountResetter,
 	): unknown;
 }

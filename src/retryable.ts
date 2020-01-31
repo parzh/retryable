@@ -71,7 +71,11 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 				resolve,
 				reject,
 				retry,
+
+				/** @deprecated */
 				retryCount,
+
+				/** @deprecated */
 				resetRetryCount,
 			);
 		}
