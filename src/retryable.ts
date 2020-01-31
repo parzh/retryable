@@ -11,19 +11,36 @@ const assertNatural = valuer.as<number>("primitive", "non-negative", "integer");
  * Retry action
  * @param action Action to perform an retry if needed
  * @example
- * const content: Buffer = await retryable<Buffer>((resolve, reject, retry, retryCount, resetRetryCount) => {
- * 	if (!fs.existsSync("/path/to/file"))
- * 		reject("File not found!");
- *
- * 	else fs.readfile("/path/to/file", (err, data) => {
+ * const content = await retryable((resolve, reject, retry) => {
+ * 	fs.readfile("/path/to/file", (err, data) => {
  * 		if (!err)
- * 			resolve(data);
+ * 			// no errors occured
+ * 			return resolve(data);
+ * 
+ * 		if (retry.count >= MAX_RETRY_COUNT)
+ * 			if (SHOULD_IGNORE_RETRY_LIMIT)
+ * 				// an error occured
+ * 				// retry limit reached
+ * 				// retry limit is ignored
+ * 				retry.resetCount();
  *
- * 		else if (retryCount >= MAX_RETRY_COUNT)
- * 			reject("Max retry count reached!");
+ * 			else 
+ * 				// an error occured
+ * 				// retry limit reached
+ * 				// retry limit is respected
+ * 				return reject("Max retry count reached!");
+ *
+ * 		if (SHOULD_RETRY_IMMEDIATELY)
+ * 			// an error occured
+ * 			// retry limit is not reached or ignored
+ * 			// retrying immediately
+ * 			retry();
  *
  * 		else
- * 			retry();
+ * 			// an error occured
+ * 			// retry limit is not reached or ignored
+ * 			// retrying after 2^retries × 100 milliseconds
+ * 			retry.after(2 ** retry.count * 100);
  * 	});
  * });
  */
