@@ -46,7 +46,10 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 	/** @private */
 	let resettingRetryCountTo: number | null = null;
 
-	function resetRetryCount(retryCountExplicit = RETRY_COUNT_DEFAULT): void {
+	function resetRetryCount(argumentRequired: boolean, retryCountExplicit = RETRY_COUNT_DEFAULT): void {
+		if (!argumentRequired)
+			retryCountExplicit = retryCountExplicit ?? RETRY_COUNT_DEFAULT;
+
 		if (retryCountExplicit !== RETRY_COUNT_DEFAULT)
 			assertNatural(retryCountExplicit, "new value of retryCount");
 
@@ -85,10 +88,10 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		}
 
 		retry.count = RETRY_COUNT_DEFAULT;
-		retry.setCount = resetRetryCount;
+		retry.setCount = resetRetryCount.bind(null, true);
 
 		/** @deprecated Use `retry.setCount` */
-		retry.resetCount = resetRetryCount;
+		retry.resetCount = resetRetryCount.bind(null, false);
 
 		execute();
 	});
