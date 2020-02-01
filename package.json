@@ -21,7 +21,7 @@
     "url": "https://github.com/parzh/retryable/issues"
   },
   "scripts": {
-    "test": "jest",
+    "test": "cross-env NODE_OPTIONS='--unhandled-rejections=strict' jest",
     "clean": "rimraf dist/*",
     "prebuild": "npm run clean",
     "build": "ncc build src/index.ts --out dist --minify",
@@ -50,6 +50,7 @@
     "@types/jest": "25.1.0",
     "@types/node": "13.5.0",
     "@zeit/ncc": "0.21.0",
+    "cross-env": "7.0.0",
     "jest": "25.1.0",
     "rimraf": "3.0.1",
     "ts-jest": "25.0.0",
