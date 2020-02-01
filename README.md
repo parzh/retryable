@@ -2,6 +2,10 @@
   <a href="https://github.com/parzh/retryable/actions?query=workflow%3A%22Test+changes%22">
     <img src="https://github.com/parzh/retryable/workflows/Test%20changes/badge.svg" />
   </a>
+
+  <a href="https://www.npmjs.com/package/@parzh/retryable">
+    <img src="https://badge.fury.io/js/%40parzh%2Fretryable.svg" />
+  </a>
 </p>
 
 # @parzh/retryable
