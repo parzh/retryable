@@ -12,7 +12,9 @@ jobs:
       - uses: actions/checkout@v2
 
       - run: |2
-          node -pe '\
-            const labels = ${{ toJson(github.event.pull_request.labels.*.name) }};\
-            const change = labels.filter((label) => label.startsWith("Change:"));\
-            console.assert(change.length === 1, `Expected exactly one "Change: *" label`);'
+          node -pe '
+            const labels = ${{ toJson(github.event.pull_request.labels.*.name) }};
+            const change = labels.filter((label) => label.startsWith("Change:"));
+
+            console.assert(change.length === 1, `Expected exactly one "Change: *" label`);
+          '
