@@ -1,6 +1,7 @@
-import { valuer } from "@valuer/main";
 import Action from "./typings/action";
 import Retryer from "./typings/retryer";
+import asNatural from "./assert/natural";
+import asNonNegative from "./assert/non-negative";
 
 /** @private */
 interface Private {
@@ -10,12 +11,6 @@ interface Private {
 
 /** @private */
 const RETRY_COUNT_DEFAULT = 0;
-
-/** @private */
-const assert = {
-	natural: valuer.as<number>("primitive", "non-negative", "integer"),
-	nonNegative: valuer.as<number>("primitive", "non-negative"),
-};
 
 /**
  * Retry action
@@ -64,7 +59,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			retryCountExplicit = retryCountExplicit ?? RETRY_COUNT_DEFAULT;
 
 		if (retryCountExplicit !== RETRY_COUNT_DEFAULT)
-			assert.natural(retryCountExplicit, "new value of retryCount");
+			asNatural(retryCountExplicit, "new value of retryCount");
 
 		__.resettingRetryCountTo = retryCountExplicit;
 	}
@@ -101,7 +96,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		}
 
 		function retryAfter(delay: number): void {
-			assert.nonNegative(delay, "retry delay");
+			asNonNegative(delay, "retry delay");
 			setTimeout(retry, delay);
 		}
 
