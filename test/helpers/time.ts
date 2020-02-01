@@ -9,7 +9,7 @@ const PRECISION = 10 * SECOND;
  * @example
  * time(); => 158055352.1882
  */
-export function time(): number;
+export default function time(): number;
 
 /**
  * Converts the supplied number of milliseconds
@@ -18,11 +18,13 @@ export function time(): number;
  * @example
  * time(300); => 0.03
  */
-export function time(msec: number): number;
+export default function time(msec: number): number;
 
-export function time(msec?: number): number {
+export default function time(msec?: number): number {
 	return (msec ?? Date.now()) / PRECISION;
 }
+
+export { time };
 
 /** Wait time for an arbitrary test */
 export const WAIT_TIME = 300;
