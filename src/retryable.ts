@@ -95,9 +95,9 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			execute();
 		}
 
-		function retryAfter(delay: number): void {
-			asNonNegative(delay, "retry delay");
-			setTimeout(retry, delay);
+		function retryAfter(msec: number): void {
+			asNonNegative(msec, "retry delay");
+			setTimeout(retry, msec);
 		}
 
 		Object.defineProperty(retry, "count", {
