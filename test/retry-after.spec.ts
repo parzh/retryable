@@ -46,5 +46,5 @@ describe("retry.after()", () => {
 		});
 
 		expect(promise).resolves.toBeUndefined();
-	});
+	}, TIMEOUT_MARGIN);
 });
