@@ -12,7 +12,10 @@ interface Private {
 const RETRY_COUNT_DEFAULT = 0;
 
 /** @private */
-const assertNatural = valuer.as<number>("primitive", "non-negative", "integer");
+const assert = {
+	natural: valuer.as<number>("primitive", "non-negative", "integer"),
+	nonNegative: valuer.as<number>("primitive", "non-negative"),
+};
 
 /**
  * Retry action
@@ -61,7 +64,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			retryCountExplicit = retryCountExplicit ?? RETRY_COUNT_DEFAULT;
 
 		if (retryCountExplicit !== RETRY_COUNT_DEFAULT)
-			assertNatural(retryCountExplicit, "new value of retryCount");
+			assert.natural(retryCountExplicit, "new value of retryCount");
 
 		__.resettingRetryCountTo = retryCountExplicit;
 	}
@@ -98,7 +101,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		}
 
 		function retryAfter(delay: number): void {
-			assertNatural(delay, "retry delay");
+			assert.nonNegative(delay, "retry delay");
 			setTimeout(retry, delay);
 		}
 
