@@ -2,7 +2,7 @@ import retryable from "./retryable";
 import wait from "./wait";
 
 /** @private */
-type RetryableFunction = typeof retryable;
+type RetriableFunction = typeof retryable;
 
 /** @private */
 type WaitFunction = typeof wait;
