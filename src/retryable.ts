@@ -56,6 +56,8 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		resettingRetryCountTo: null,
 	};
 
+    let retryAct = null;
+
 	function resetRetryCount(argumentRequired: boolean, retryCountExplicit = RETRY_COUNT_DEFAULT): void {
 		if (!argumentRequired)
 			retryCountExplicit = retryCountExplicit ?? RETRY_COUNT_DEFAULT;
@@ -100,7 +102,11 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		}
 
 		function retryAfter(msec: number): void {
-			setTimeout(retry, msec);
+			retryAct = setTimeout(retry, msec);
+		}
+
+		function retryCancel(): void {
+			clearTimeout(retryAct);
 		}
 
 		Object.defineProperty(retry, "count", {
@@ -116,6 +122,8 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		retry.after = retryAfter;
 
 		retry.setCount = resetRetryCount.bind(null, true);
+
+		retry.cancel = retryCancel;
 
 		execute();
 	});
