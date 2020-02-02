@@ -68,10 +68,12 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 
 	return new Promise<Value>((resolve, reject) => {
 		/** @private */
-		function execute() {
+		function execute(): void {
 			action(
 				resolve,
 				reject,
+				// explicitly relying on hoisting here
+				// eslint-disable-next-line @typescript-eslint/no-use-before-define
 				retry as Retryer,
 
 				/** @deprecated Use `count` property of the `retry` argument */
@@ -83,7 +85,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		}
 
 		/** @private */
-		function updateRetryCount() {
+		function updateRetryCount(): void {
 			if (__.resettingRetryCountTo != null) {
 				__.retryCount = __.resettingRetryCountTo;
 				__.resettingRetryCountTo = null;
@@ -92,7 +94,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			}
 		}
 
-		function retry() {
+		function retry(): void {
 			updateRetryCount();
 			execute();
 		}
