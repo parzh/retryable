@@ -1,3 +1,8 @@
+env:
+  es6: true
+  node: true
+  jest: true
+
 parser: "@typescript-eslint/parser"
 
 extends:
@@ -16,3 +21,6 @@ rules:
   # Sometimes the tests are written for usage
   # in pure JavaScript, where there's no tsc
   "@typescript-eslint/ban-ts-ignore": 0
+
+  # Noops are often useful as default callbacks
+  "@typescript-eslint/no-empty-function": 0
