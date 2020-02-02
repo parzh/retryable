@@ -1,4 +1,4 @@
-import retryable = require("../src")
+import retryable = require("../src");
 import TypeOf from "./helpers/typeof.type";
 
 describe('import retryable = require("@parzh/retryable")', () => {
