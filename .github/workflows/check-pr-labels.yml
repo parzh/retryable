@@ -5,8 +5,8 @@ on:
     branches:
       - develop
     types:
-      - labeled
-      - unlabeled
+      - opened
+      - synchronize
 
 jobs:
   check-label:
