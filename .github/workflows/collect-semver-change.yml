@@ -1,0 +1,31 @@
+name: Collect SemVer change
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+
+jobs:
+  check-head:
+    name: Check PR head is 'parzh:develop'
+    runs-on: ubuntu-18.04
+    env:
+      PR_HEAD_EXPECTED: parzh:develop
+      PR_HEAD: ${{ github.event.pull_request.head.label }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: |2
+          node -pe '
+            const { PR_HEAD, PR_HEAD_EXPECTED } = process.env;
+
+            if (PR_HEAD !== PR_HEAD_EXPECTED) {
+              console.error(`Expected head "${ PR_HEAD_EXPECTED }", instead got ${ PR_HEAD }`);
+              process.exit(1);
+            }
+          '
+
+  # TODO: collect-semver
