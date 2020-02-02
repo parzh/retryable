@@ -1,0 +1,14 @@
+parser: "@typescript-eslint/parser"
+
+extends:
+  - "plugin:@typescript-eslint/recommended"
+
+parserOptions:
+  sourceType: module
+  ecmaVersion: 2018
+
+root: true
+
+rules:
+  # I don't usually abuse non-null assertions
+  "@typescript-eslint/no-non-null-assertion": 0
