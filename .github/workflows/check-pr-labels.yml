@@ -9,7 +9,7 @@ jobs:
   check-label:
     name: 'Check "Change: ***" label'
     runs-on: ubuntu-18.04
-    if: contains([ 'opened', 'labeled', 'unlabeled' ], github.event.action)
+    if: github.event.action == 'opened' || github.event.action == 'labeled' || github.event.action == 'unlabeled'
     env:
       PR_LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
 
