@@ -9,8 +9,8 @@ on:
     branches:
       - develop
     types:
+      - opened
       - synchronize
-      # TODO: perhaps, must add "opened"
 
 jobs:
   build:
