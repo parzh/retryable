@@ -26,4 +26,7 @@ rules:
   # Noops are often useful as default callbacks
   "@typescript-eslint/no-empty-function": 0
 
+  # TypeScript, ncc, and Jest already handle this
+  "no-undef": 0
+
   no-trailing-spaces: 2
