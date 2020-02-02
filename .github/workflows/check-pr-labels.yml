@@ -7,7 +7,7 @@ on:
 
 jobs:
   check-label:
-    name: 'Check "Change: ***" label'
+    name: Check SemVer label
     runs-on: ubuntu-18.04
     if: github.event.action == 'opened' || github.event.action == 'labeled' || github.event.action == 'unlabeled'
     env:
