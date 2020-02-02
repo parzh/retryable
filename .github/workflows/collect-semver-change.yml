@@ -7,24 +7,28 @@ on:
       - master
     types:
       - opened
+      - synchronize # TODO: remove when finished debugging
 
 jobs:
   check-head:
-    name: Check PR head is 'develop'
+    name: Check PR head is 'parzh:develop'
     runs-on: ubuntu-18.04
     env:
-      PR_HEAD_BRANCH_NAME: ${{ github.head_ref }}
+      PR_HEAD_EXPECTED: parzh:develop
+      PR_HEAD: ${{ github.event.pull_request.head.label }}
 
     steps:
       - uses: actions/checkout@v2
 
       - run: |2
           node -pe '
-            const branch = process.env.PR_HEAD_BRANCH_NAME;
+            const { PR_HEAD, PR_HEAD_EXPECTED } = process.env;
+
+            const head = process.env.PR_HEAD;
 
             console.assert(
-              branch === "develop",
-              `Expected branch "develop", instead got ${ branch }`
+              PR_HEAD === PR_HEAD_EXPECTED,
+              `Expected head "${ PR_HEAD_EXPECTED }", instead got ${ PR_HEAD }`,
             );
           '
 
