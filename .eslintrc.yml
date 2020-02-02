@@ -12,3 +12,7 @@ root: true
 rules:
   # I don't usually abuse non-null assertions
   "@typescript-eslint/no-non-null-assertion": 0
+
+  # Sometimes the tests are written for usage
+  # in pure JavaScript, where there's no tsc
+  "@typescript-eslint/ban-ts-ignore": 0
