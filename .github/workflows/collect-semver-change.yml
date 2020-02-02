@@ -24,12 +24,10 @@ jobs:
           node -pe '
             const { PR_HEAD, PR_HEAD_EXPECTED } = process.env;
 
-            const head = process.env.PR_HEAD;
-
-            console.assert(
-              PR_HEAD === PR_HEAD_EXPECTED,
-              `Expected head "${ PR_HEAD_EXPECTED }", instead got ${ PR_HEAD }`,
-            );
+            if (PR_HEAD !== PR_HEAD_EXPECTED) {
+              console.error(`Expected head "${ PR_HEAD_EXPECTED }", instead got ${ PR_HEAD }`);
+              process.exit(1);
+            }
           '
 
   # TODO: collect-semver
