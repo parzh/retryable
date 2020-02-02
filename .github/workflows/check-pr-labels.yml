@@ -4,12 +4,15 @@ on:
   pull_request:
     branches:
       - develop
+    types:
+      - opened
+      - labeled
+      - unlabeled
 
 jobs:
   check-label:
     name: Check SemVer label
     runs-on: ubuntu-18.04
-    if: contains([ 'opened', 'labeled', 'unlabeled' ], github.event.action)
     env:
       PR_LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
 
