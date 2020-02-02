@@ -3,6 +3,7 @@ name: Collect SemVer change
 on:
   pull_request:
     branches:
+      - feature/pr-to-master-only-from-develop # TODO: remove when finished debugging
       - master
     types:
       - opened
