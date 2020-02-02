@@ -24,3 +24,5 @@ rules:
 
   # Noops are often useful as default callbacks
   "@typescript-eslint/no-empty-function": 0
+
+  no-trailing-spaces: 2
