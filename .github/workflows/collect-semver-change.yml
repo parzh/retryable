@@ -1,0 +1,30 @@
+name: Collect SemVer change
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+
+jobs:
+  check-head:
+    name: Check PR head is 'develop'
+    runs-on: ubuntu-18.04
+    env:
+      PR_HEAD_BRANCH_NAME: ${{ github.head_ref }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: |2
+          node -pe '
+            const branch = process.env.PR_HEAD_BRANCH_NAME;
+
+            console.assert(
+              branch === "develop",
+              `Expected branch "develop", instead got ${ branch }`
+            );
+          '
+
+  # TODO: collect-semver
