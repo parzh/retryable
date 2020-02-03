@@ -6,6 +6,7 @@ import Retryer from "./typings/retryer";
 interface Private {
 	retryCount: number;
 	resettingRetryCountTo: number | null;
+	retryTimeoutId: NodeJS.Timer | null;
 }
 
 /** @private */
@@ -54,6 +55,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 	const __: Private = {
 		retryCount: RETRY_COUNT_DEFAULT,
 		resettingRetryCountTo: null,
+		retryTimeoutId: null,
 	};
 
 	function resetRetryCount(argumentRequired: boolean, retryCountExplicit = RETRY_COUNT_DEFAULT): void {
@@ -100,7 +102,12 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		}
 
 		function retryAfter(msec: number): void {
-			setTimeout(retry, msec);
+			__.retryTimeoutId = setTimeout(retry, msec);
+		}
+
+		function retryCancel(): void {
+			if (__.retryTimeoutId)
+				clearTimeout(__.retryTimeoutId);
 		}
 
 		Object.defineProperty(retry, "count", {
@@ -116,6 +123,8 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		retry.after = retryAfter;
 
 		retry.setCount = resetRetryCount.bind(null, true);
+
+		retry.cancel = retryCancel;
 
 		execute();
 	});
