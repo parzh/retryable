@@ -106,7 +106,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		}
 
 		function retryCancel(): void {
-			if(__.retryTimeoutId)
+			if (__.retryTimeoutId)
 				clearTimeout(__.retryTimeoutId);
 		}
 
