@@ -14,7 +14,7 @@ describe("retry.cancel()", () => {
             retry.after(WAIT_TIME);
             retry.cancel();
         });
-        
+
         expect(value).toEqual(1);
     }, TIMEOUT_MARGIN + SECOND)
 })
