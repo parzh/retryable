@@ -6,7 +6,7 @@ describe("retry.cancel()", () => {
         let value = 0;
 
         await retryable((resolve, reject, retry) => {
-            if(value === 0)
+            if (value === 0)
                 setTimeout(resolve, SECOND);
 
             value++
@@ -17,4 +17,4 @@ describe("retry.cancel()", () => {
 
         expect(value).toEqual(1);
     }, TIMEOUT_MARGIN + SECOND)
-})
+});
