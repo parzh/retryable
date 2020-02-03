@@ -54,9 +54,8 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 	const __: Private = {
 		retryCount: RETRY_COUNT_DEFAULT,
 		resettingRetryCountTo: null,
+		retryTimeoutId: null
 	};
-
-    let retryAct = null;
 
 	function resetRetryCount(argumentRequired: boolean, retryCountExplicit = RETRY_COUNT_DEFAULT): void {
 		if (!argumentRequired)
@@ -102,11 +101,11 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		}
 
 		function retryAfter(msec: number): void {
-			retryAct = setTimeout(retry, msec);
+			__.retryTimeoutId = setTimeout(retry, msec);
 		}
 
 		function retryCancel(): void {
-			clearTimeout(retryAct);
+			clearTimeout(__.retryTimeoutId);
 		}
 
 		Object.defineProperty(retry, "count", {
