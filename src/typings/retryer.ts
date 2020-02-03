@@ -7,5 +7,5 @@ export default interface Retryer {
 
 	setCount(newValue: number): void;
 
-	retryCancel(): void;
+	cancel(): void;
 }
