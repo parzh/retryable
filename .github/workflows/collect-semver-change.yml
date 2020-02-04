@@ -17,15 +17,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
 
-      - run: |2
-          node -pe '
-            const { PR_HEAD, PR_HEAD_EXPECTED } = process.env;
-
-            if (PR_HEAD !== PR_HEAD_EXPECTED) {
-              console.error(`Expected head "${ PR_HEAD_EXPECTED }", instead got ${ PR_HEAD }`);
-              process.exit(1);
-            }
-          '
-
-  # TODO: collect-semver
+      - run: python scripts/check-pr-head.py
