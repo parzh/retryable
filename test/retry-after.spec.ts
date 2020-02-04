@@ -21,4 +21,30 @@ describe("retry.after()", () => {
 		expect(time()).toBeCloseTo(finish);
 		expect(retried).toBe(true);
 	}, TIMEOUT_MARGIN + WAIT_TIME);
+
+	it("forbids negative delays", async () => {
+		try {
+			await retryable((resolve, reject, retry) => {
+				retry.after(-14);
+			});
+
+			fail("Function did not throw");
+		} catch (error) {
+			expect(error.message).toContain("a negative number");
+		}
+	});
+
+	it("allows positive non-integer delays", () => {
+		let retried = false;
+
+		const promise = retryable((resolve, reject, retry) => {
+			if (retried)
+				return resolve();
+
+			retried = true;
+			retry.after(42.17);
+		});
+
+		expect(promise).resolves.toBeUndefined();
+	}, TIMEOUT_MARGIN);
 });
