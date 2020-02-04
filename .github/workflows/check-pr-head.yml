@@ -1,4 +1,4 @@
-name: Collect SemVer change
+name: Check PR head
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   check-head:
-    name: Check PR head is 'parzh:develop'
+    name: Check PR head on release
     runs-on: ubuntu-18.04
     env:
       PR_HEAD_EXPECTED: parzh:develop
