@@ -1,5 +1,5 @@
 import wait from "../src/wait";
-import { time, WAIT_TIME, TIMEOUT_MARGIN } from "./helpers/time";
+import time, { WAIT_TIME, TIMEOUT_MARGIN } from "./helpers/time";
 
 it("resolves after the specified amount of time", async () => {
 	const finish = time() + time(WAIT_TIME);

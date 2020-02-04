@@ -1,5 +1,5 @@
 import retryable from "../src/retryable";
-import { time, TIMEOUT_MARGIN, WAIT_TIME } from "./helpers/time";
+import time, { TIMEOUT_MARGIN, WAIT_TIME } from "./helpers/time";
 
 describe("retry.after()", () => {
 	it("allows retrying after a specified delay", async () => {
