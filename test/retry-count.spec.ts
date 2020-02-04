@@ -7,14 +7,12 @@ describe("retry.count", () => {
 
 		let value = 0;
 
-		const shouldRetry = () => value < TARGET_VALUE;
-
 		await retryable((resolve, reject, retry) => {
 			expect(retry.count).toEqual(value);
 
 			value++;
 
-			if (shouldRetry())
+			if (value < TARGET_VALUE)
 				retry();
 
 			else
