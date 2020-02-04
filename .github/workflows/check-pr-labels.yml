@@ -12,26 +12,15 @@ on:
 
 jobs:
   check-label:
-    name: 'Check "Change: ***" label'
+    name: Check SemVer label
     runs-on: ubuntu-18.04
     env:
       PR_LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
 
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+            python-version: '3.8'
 
-      - run: |2
-          node -pe '
-            const labels = JSON.parse(process.env.PR_LABELS);
-            const [ label, ...other ] = labels.filter((label) => label.startsWith("Change: "));
-
-            if (other.length > 0)
-              throw new Error(`Expected exactly one "Change: ***" label`);
-
-            if (!label)
-              throw new Error(`No "Change: ***" labels found`);
-
-            const [ , change ] = label;
-
-            console.log(`SemVer change is ${ change }`);
-          '
+      - run: python scripts/check-labels.py
