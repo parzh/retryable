@@ -6,4 +6,6 @@ export default interface Retryer {
 	after(msec: number): void;
 
 	setCount(newValue: number): void;
+
+	cancel(): void;
 }
