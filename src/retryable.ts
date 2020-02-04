@@ -6,6 +6,7 @@ import Retryer from "./typings/retryer";
 interface Private {
 	retryCount: number;
 	resettingRetryCountTo: number | null;
+	retryTimeoutId: NodeJS.Timer | null;
 }
 
 /** @private */
@@ -54,6 +55,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 	const __: Private = {
 		retryCount: RETRY_COUNT_DEFAULT,
 		resettingRetryCountTo: null,
+		retryTimeoutId: null,
 	};
 
 	function resetRetryCount(argumentRequired: boolean, retryCountExplicit = RETRY_COUNT_DEFAULT): void {
@@ -68,10 +70,12 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 
 	return new Promise<Value>((resolve, reject) => {
 		/** @private */
-		function execute() {
+		function execute(): void {
 			action(
 				resolve,
 				reject,
+				// explicitly relying on hoisting here
+				// eslint-disable-next-line @typescript-eslint/no-use-before-define
 				retry as Retryer,
 
 				/** @deprecated Use `count` property of the `retry` argument */
@@ -83,7 +87,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		}
 
 		/** @private */
-		function updateRetryCount() {
+		function updateRetryCount(): void {
 			if (__.resettingRetryCountTo != null) {
 				__.retryCount = __.resettingRetryCountTo;
 				__.resettingRetryCountTo = null;
@@ -92,13 +96,18 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			}
 		}
 
-		function retry() {
+		function retry(): void {
 			updateRetryCount();
 			execute();
 		}
 
 		function retryAfter(msec: number): void {
-			setTimeout(retry, msec);
+			__.retryTimeoutId = setTimeout(retry, msec);
+		}
+
+		function retryCancel(): void {
+			if (__.retryTimeoutId)
+				clearTimeout(__.retryTimeoutId);
 		}
 
 		Object.defineProperty(retry, "count", {
@@ -114,6 +123,8 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		retry.after = retryAfter;
 
 		retry.setCount = resetRetryCount.bind(null, true);
+
+		retry.cancel = retryCancel;
 
 		execute();
 	});

@@ -1,0 +1,32 @@
+env:
+  es6: true
+  node: true
+  jest: true
+
+parser: "@typescript-eslint/parser"
+
+extends:
+  - "eslint:recommended"
+  - "plugin:@typescript-eslint/recommended"
+
+parserOptions:
+  sourceType: module
+  ecmaVersion: 2018
+
+root: true
+
+rules:
+  # I don't usually abuse non-null assertions
+  "@typescript-eslint/no-non-null-assertion": 0
+
+  # Sometimes the tests are written for usage in pure
+  # JavaScript, where there's no tsc and type-checking
+  "@typescript-eslint/ban-ts-ignore": 0
+
+  # Noops are often useful as default callbacks
+  "@typescript-eslint/no-empty-function": 0
+
+  # TypeScript, ncc, and Jest already handle this
+  "no-undef": 0
+
+  no-trailing-spaces: 2
