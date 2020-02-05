@@ -34,10 +34,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - run: git fetch --no-tags --prune origin --unshallow
+
       - uses: actions/setup-python@v1
         with:
           python-version: '3.8'
 
+      - run: pip install PyGithub
+
       - run: |2
-          export MERGES="$(git rev-list --merges --first-parent --reverse ${{ github.base_ref }}..${{ github.head_ref }})"
+          set -e
+          export MERGES="$(git rev-list --merges --first-parent --reverse origin/master..origin/develop)"
           python scripts/gather-release-version.py

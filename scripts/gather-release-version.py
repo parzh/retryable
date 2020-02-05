@@ -3,6 +3,25 @@ import re
 
 from github import Github as GitHub
 
+github = GitHub(os.environ['BOT_PERSONAL_ACCESS_TOKEN'])
+repo_remote = github.get_repo('parzh/retryable')
+develop_sha = repo_remote.get_branch("develop").commit.sha
+
+def get_pr_by_commit_sha(commit_sha):
+	issues = github.search_issues(query=commit_sha)
+	prs = []
+
+	for issue in issues:
+		pr = repo_remote.get_pull(issue.number)
+
+		if pr.head.sha != develop_sha:
+			prs.append(pr)
+
+	if (pr_count := len(prs)) != 1:
+		raise Exception("Cannot continue: expected 1 PR associated with commit %s, got %i" % (commit_sha, pr_count))
+
+	return prs[0]
+
 PR_LABEL_SEP = ": "
 PR_LABEL_CHANGE_KEY = "Change"
 
@@ -33,18 +52,6 @@ def get_pr_change_type(pr):
 
 	return change_type
 
-github = GitHub(os.environ['BOT_PERSONAL_ACCESS_TOKEN'])
-
-def get_pr_by_commit_sha(commit_sha):
-	results = github.search_issues(query=commit_sha)
-
-	if (pr_count := results.totalCount) != 1:
-		raise Exception("Cannot continue: expected 1 PR associated with commit %s, got %i" % (commit_sha, pr_count))
-
-	pr = results.get_page(0)[0]
-
-	return pr
-
 PR_LISTS = {
 	"major": [],
 	"minor": [],
@@ -58,7 +65,6 @@ def show_output_in_console():
 		for pr in list_of_prs:
 			print("\t%s\n\tby @%s\n\t%s\n" % (pr.title, pr.user.login, pr.html_url))
 
-repo_remote = github.get_repo('parzh/retryable')
 pull_request = repo_remote.get_pull(int(os.environ['PR_NUMBER']))
 
 def post_output_as_message(release_version):
@@ -133,7 +139,7 @@ release_version = RELEASE_VERSIONS[release_type]
 change_label, *other = filter(is_change(release_version), repo_remote.get_labels())
 
 # set the label to the PR
-pull_request.add_to_labels(change_label) # TODO: uncomment
+pull_request.add_to_labels(change_label)
 
 # show all the outputs
 print('Automatically added label "%s" to pull request #%i' % (change_label.name, pull_request.number))
