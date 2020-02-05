@@ -1,0 +1,32 @@
+name: Perform @next release
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - closed
+
+jobs:
+  tests:
+    name: Test release changes
+    runs-on: ubuntu-18.04
+    if: github.event.pull_request.merged
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - run: npm run lint
+
+  release:
+    name: Release as @next
+    runs-on: ubuntu-18.04
+    needs: [tests]
+    steps:
+      - uses: actions/checkout@v2
+
+      # TODO: actually perform release. Currently it is just a check
+      # that job doesn't run if its dependency is skipped not failed
+      - run: echo "noop"
