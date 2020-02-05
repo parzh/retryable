@@ -16,12 +16,6 @@ def is_change(change_type=None):
 
 	return is_change_internal
 
-CHANGE_TYPE = {
-	"major": 3,
-	"minor": 2,
-	"patch": 1,
-}
-
 def get_pr_change_type(pr):
 	label, *other = filter(is_change(), pr.labels)
 
@@ -59,19 +53,51 @@ PR_LISTS = {
 
 def show_output_in_console():
 	for change_type, list_of_prs in PR_LISTS.items():
-		print("'%s' PRs (%i):" % (change_type, len(list_of_prs)))
+		print("%s (%i):" % (change_type, len(list_of_prs)))
 
 		for pr in list_of_prs:
 			print("\t%s\n\tby @%s\n\t%s\n" % (pr.title, pr.user.login, pr.html_url))
 
+repo_remote = github.get_repo('parzh/retryable')
+pull_request = repo_remote.get_pull(int(os.environ['PR_NUMBER']))
+
+def post_output_as_message(release_version):
+	message_lines = [
+		"Hello 👋! Pardon the interruption.",
+		"",
+		"I've figured out that this pull request represents a '**%s**' release." % (release_version),
+		"",
+		"Below you can see a list of other pull requests that will be merged by merging this one.",
+		"",
+	]
+
+	for change_type, list_of_prs in PR_LISTS.items():
+		message_lines.extend([
+			"#### Pull requests with `%s` change (%i):" % (change_type, len(list_of_prs)),
+			"",
+		])
+
+		for pr in list_of_prs:
+			message_lines.append("- #%i" % (pr.number))
+
+		message_lines.append("")
+
+	message = "\n".join(message_lines).replace("\n\n\n", "\n\n")
+
+	pull_request.create_issue_comment(message)
+
 # ***
+
+CHANGE_TYPE = {
+	"major": 3,
+	"minor": 2,
+	"patch": 1,
+}
 
 # that's what we're gonna figure out
 # 0 is erroneous, means unknown type
 release_type = 0
 
-repo_remote = github.get_repo('parzh/retryable')
-pull_request = repo_remote.get_pull(int(os.environ['PR_NUMBER']))
 merge_commits_shas = os.environ['MERGES'].split('\n')
 
 for merge_commit_sha in merge_commits_shas:
@@ -107,9 +133,10 @@ release_version = RELEASE_VERSIONS[release_type]
 change_label, *other = filter(is_change(release_version), repo_remote.get_labels())
 
 # set the label to the PR
-pull_request.add_to_labels(change_label)
+pull_request.add_to_labels(change_label) # TODO: uncomment
 
 # show all the outputs
 print('Automatically added label "%s" to pull request #%i' % (change_label.name, pull_request.number))
 print("")
 show_output_in_console()
+post_output_as_message(release_version)
