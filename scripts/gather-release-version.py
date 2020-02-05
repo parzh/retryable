@@ -120,6 +120,24 @@ for merge_commit_sha in merge_commits_shas:
 
 # ***
 
+def set_pr_change_label(release_version):
+	# get all change labels from remote
+	change_labels = filter(is_change(), repo.get_labels())
+
+	# get all labels from PR
+	pr_labels = list(pull_request.get_labels())
+
+	# remove all change labels from PR
+	for label in change_labels:
+		if label in pr_labels:
+			pull_request.remove_from_labels(label)
+
+	# get corresponding change label
+	change_label = filter(is_change(release_version), change_labels)
+
+	# set it to the PR
+	pull_request.add_to_labels(change_label)
+
 RELEASE_VERSIONS = [
 	None,
 	"patch",
@@ -134,11 +152,8 @@ assert release_type <= 3, "Unknown error: unexpected release type"
 # get release version (e.g., 'patch')
 release_version = RELEASE_VERSIONS[release_type]
 
-# get label from remote that corresponds the release version
-change_label, *other = filter(is_change(release_version), repo.get_labels())
-
 # set the label to the PR
-pull_request.add_to_labels(change_label)
+set_pr_change_label(release_version)
 
 # show all the outputs
 print('Automatically added label "%s" to pull request #%i' % (change_label.name, pull_request.number))
