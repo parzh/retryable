@@ -133,7 +133,7 @@ def set_pr_change_label(release_version):
 			pull_request.remove_from_labels(label)
 
 	# get corresponding change label
-	change_label = filter(is_change(release_version), change_labels)[0]
+	change_label, *other = filter(is_change(release_version), change_labels)
 
 	# set it to the PR
 	pull_request.add_to_labels(change_label)
