@@ -40,6 +40,15 @@ def get_pr_change_type(pr):
 
 	return change_type
 
+PR_NUMBER_PATTERN = "\s#(\d+)\s"
+PR_NUMBER_PATTERN_GROUP_NUMBER = 1
+
+def get_pr_number_from_commit(commit):
+	match = re.search(PR_NUMBER_PATTERN, commit.message)
+	number = match.group(PR_NUMBER_PATTERN_GROUP_NUMBER)
+
+	return int(number)
+
 PR_LISTS = {
 	"patch": [],
 	"minor": [],
@@ -67,21 +76,15 @@ pull_request = repo_remote.get_pull(int(os.environ['PR_NUMBER']))
 merge_commits_shas = os.environ['MERGES'].split('\n')
 repo_local = Repo.init('.')
 
-PR_NUMBER_PATTERN = "\s#(\d+)\s"
-PR_NUMBER_PATTERN_GROUP_NUMBER = 1
-
 for merge_commit_sha in merge_commits_shas:
 	# get merge commit
 	merge_commit = repo_local.commit(merge_commit_sha)
 
-	# get merge commit message (it holds the PR number)
-	message = merge_commit.message
-
 	# find PR number in the message
-	pr_number: str = re.search(PR_NUMBER_PATTERN, message).group(PR_NUMBER_PATTERN_GROUP_NUMBER)
+	pr_number = get_pr_number_from_commit(merge_commit)
 
 	# get PR by its number
-	pr = repo_remote.get_pull(int(pr_number))
+	pr = repo_remote.get_pull(pr_number)
 
 	# get and save PR change type
 	pr_change_type = get_pr_change_type(pr)
