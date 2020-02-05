@@ -17,11 +17,11 @@ def is_change(change_type=None):
 
 	return is_change_internal
 
-CHANGE_TYPE = dict({
+CHANGE_TYPE = {
 	"patch": 1,
 	"minor": 2,
 	"major": 3
-})
+}
 
 def get_pr_change_type(pr):
 	label, *other = filter(is_change(), pr.labels)
@@ -36,9 +36,23 @@ def get_pr_change_type(pr):
 	except str as error:
 		raise Exception("%s on PR #%i; please debug 'check-pr-labels.yml' workflow" % (error, pr.number))
 
-	key, change = label.name.split(PR_LABEL_SEP)
+	key, change_type = label.name.split(PR_LABEL_SEP)
 
-	return CHANGE_TYPE[change]
+	return change_type
+
+PR_LISTS = {
+	"patch": [],
+	"minor": [],
+	"major": []
+}
+
+def show_output_in_console():
+	for change_type, list_of_prs in PR_LISTS.items():
+		print("'%s' PRs (%i):" % (change_type, len(list_of_prs)))
+
+		for pr in list_of_prs:
+			print('\t%s\n\t by @%s\n\t%s' % (pr.title, pr.user.login, pr.html_url))
+			print("")
 
 # ***
 
@@ -69,8 +83,12 @@ for merge_commit_sha in merge_commits_shas:
 	# get PR by its number
 	pr = repo_remote.get_pull(int(pr_number))
 
+	# get and save PR change type
+	pr_change_type = get_pr_change_type(pr)
+	PR_LISTS[pr_change_type].append(pr)
+
 	# update release type, based on the PR change type
-	release_type = max(release_type, get_pr_change_type(pr))
+	release_type = max(release_type, CHANGE_TYPE[pr_change_type])
 
 # ***
 
@@ -97,4 +115,7 @@ change_label, *other = filter(is_change(release_version), repo_remote_labels)
 # set the label to the PR
 pull_request.add_to_labels(change_label)
 
+# show all the outputs
 print('Automatically added label "%s" to pull request #%i' % (change_label.name, pull_request.number))
+print("")
+show_output_in_console()
