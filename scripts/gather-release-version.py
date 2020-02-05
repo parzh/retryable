@@ -122,7 +122,7 @@ for merge_commit_sha in merge_commits_shas:
 
 def set_pr_change_label(release_version):
 	# get all change labels from remote
-	change_labels = filter(is_change(), repo.get_labels())
+	change_labels = list(filter(is_change(), repo.get_labels()))
 
 	# get all labels from PR
 	pr_labels = list(pull_request.get_labels())
@@ -133,7 +133,7 @@ def set_pr_change_label(release_version):
 			pull_request.remove_from_labels(label)
 
 	# get corresponding change label
-	change_label, *other = filter(is_change(release_version), change_labels)
+	change_label, *other = list(filter(is_change(release_version), change_labels))
 
 	# set it to the PR
 	pull_request.add_to_labels(change_label)
