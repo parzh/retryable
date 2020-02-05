@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - master
+      - bugfix/fix-prepare-release-script # TODO: remove after debugging
     types:
       - opened
       - synchronize
