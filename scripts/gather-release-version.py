@@ -64,7 +64,6 @@ for merge_commit_sha in merge_commits_shas:
 	message = merge_commit.message
 
 	# find PR number in the message
-	# FIXME: exclude merges that are from master
 	pr_number: str = re.search(PR_NUMBER_PATTERN, message).group(PR_NUMBER_PATTERN_GROUP_NUMBER)
 
 	# get PR by its number

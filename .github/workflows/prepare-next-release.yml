@@ -39,5 +39,5 @@ jobs:
           python-version: '3.8'
 
       - run: |2
-          export MERGES="$(git rev-list ${{ github.base_ref }}..${{ github.head_ref }} --merges)"
+          export MERGES="$(git rev-list --merges --first-parent ${{ github.base_ref }}..${{ github.head_ref }})"
           python scripts/gather-release-version.py
