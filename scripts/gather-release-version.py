@@ -14,7 +14,7 @@ def get_pr_by_commit_sha(commit_sha):
 	for issue in issues:
 		pr = repo_remote.get_pull(issue.number)
 
-		if pr.head.sha != develop_sha:
+		if pr.head.label != "parzh:develop":
 			prs.append(pr)
 
 	if (pr_count := len(prs)) != 1:
