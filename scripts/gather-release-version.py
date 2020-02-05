@@ -90,7 +90,7 @@ def post_output_as_message(release_version):
 
 	message = "\n".join(message_lines).replace("\n\n\n", "\n\n")
 
-	# pull_request.create_issue_comment(message) # TODO: uncomment
+	pull_request.create_issue_comment(message)
 
 # ***
 
@@ -139,7 +139,7 @@ release_version = RELEASE_VERSIONS[release_type]
 change_label, *other = filter(is_change(release_version), repo_remote.get_labels())
 
 # set the label to the PR
-# pull_request.add_to_labels(change_label) # TODO: uncomment
+pull_request.add_to_labels(change_label)
 
 # show all the outputs
 print('Automatically added label "%s" to pull request #%i' % (change_label.name, pull_request.number))

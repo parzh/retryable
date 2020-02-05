@@ -4,8 +4,6 @@ on:
   pull_request:
     branches:
       - master
-      # TODO: remove after debugging:
-      - bugfix/fix-prepare-release-script
     types:
       - opened
       - synchronize
@@ -24,11 +22,7 @@ jobs:
         with:
           python-version: '3.8'
 
-      # TODO: uncomment after debugging:
-      # - run: python scripts/check-pr-head.py
-
-      # TODO: remove after debugging:
-      - run: echo "noop"
+      - run: python scripts/check-pr-head.py
 
   gather-version:
     name: Gather release version
