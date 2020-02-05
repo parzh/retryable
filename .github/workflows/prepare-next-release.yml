@@ -45,5 +45,5 @@ jobs:
 
       - run: |2
           set -e
-          export MERGES="$(git rev-list --merges --first-parent --reverse master..develop)"
+          export MERGES="$(git rev-list --merges --first-parent --reverse origin/master..origin/develop)"
           python scripts/gather-release-version.py
