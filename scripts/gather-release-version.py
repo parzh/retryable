@@ -3,18 +3,17 @@ import re
 
 from github import Github as GitHub
 
-github = GitHub(os.environ['BOT_PERSONAL_ACCESS_TOKEN'])
-repo_remote = github.get_repo('parzh/retryable')
-develop_sha = repo_remote.get_branch("develop").commit.sha
+github = GitHub(os.environ["BOT_PERSONAL_ACCESS_TOKEN"])
+repo = github.get_repo("parzh/retryable")
 
 def get_pr_by_commit_sha(commit_sha):
 	issues = github.search_issues(query=commit_sha)
 	prs = []
 
 	for issue in issues:
-		pr = repo_remote.get_pull(issue.number)
+		pr = repo.get_pull(issue.number)
 
-		if pr.head.sha != develop_sha:
+		if pr.head.label != "parzh:develop":
 			prs.append(pr)
 
 	if (pr_count := len(prs)) != 1:
@@ -65,7 +64,7 @@ def show_output_in_console():
 		for pr in list_of_prs:
 			print("\t%s\n\tby @%s\n\t%s\n" % (pr.title, pr.user.login, pr.html_url))
 
-pull_request = repo_remote.get_pull(int(os.environ['PR_NUMBER']))
+pull_request = repo.get_pull(int(os.environ["PR_NUMBER"]))
 
 def post_output_as_message(release_version):
 	message_lines = [
@@ -104,7 +103,7 @@ CHANGE_TYPE = {
 # 0 is erroneous, means unknown type
 release_type = 0
 
-merge_commits_shas = os.environ['MERGES'].split('\n')
+merge_commits_shas = os.environ["MERGES"].split("\n")
 
 for merge_commit_sha in merge_commits_shas:
 	# get PR by its number
@@ -121,6 +120,26 @@ for merge_commit_sha in merge_commits_shas:
 
 # ***
 
+def get_pr_change_label(release_version):
+	# get all change labels from remote
+	change_labels = list(filter(is_change(), repo.get_labels()))
+
+	# get all labels from PR
+	pr_labels = list(pull_request.get_labels())
+
+	# remove all change labels from PR
+	for label in change_labels:
+		if label in pr_labels:
+			pull_request.remove_from_labels(label)
+
+	# get corresponding change label
+	change_label, *other = list(filter(is_change(release_version), change_labels))
+
+	# set it to the PR
+	pull_request.add_to_labels(change_label)
+
+	return change_label
+
 RELEASE_VERSIONS = [
 	None,
 	"patch",
@@ -135,11 +154,8 @@ assert release_type <= 3, "Unknown error: unexpected release type"
 # get release version (e.g., 'patch')
 release_version = RELEASE_VERSIONS[release_type]
 
-# get label from remote that corresponds the release version
-change_label, *other = filter(is_change(release_version), repo_remote.get_labels())
-
 # set the label to the PR
-pull_request.add_to_labels(change_label)
+change_label = get_pr_change_label(release_version)
 
 # show all the outputs
 print('Automatically added label "%s" to pull request #%i' % (change_label.name, pull_request.number))
