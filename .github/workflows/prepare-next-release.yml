@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - master
+      - bugfix/fix-pr-filtering-in-script # TODO: remove after debugging
     types:
       - opened
       - synchronize
@@ -22,7 +23,7 @@ jobs:
         with:
           python-version: '3.8'
 
-      - run: python scripts/check-pr-head.py
+      # - run: python scripts/check-pr-head.py # TODO: uncomment after debugging
 
   gather-version:
     name: Gather release version
