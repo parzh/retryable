@@ -3,9 +3,8 @@ import re
 
 from github import Github as GitHub
 
-github = GitHub(os.environ['BOT_PERSONAL_ACCESS_TOKEN'])
-repo_remote = github.get_repo('parzh/retryable')
-develop_sha = repo_remote.get_branch("develop").commit.sha
+github = GitHub(os.environ["BOT_PERSONAL_ACCESS_TOKEN"])
+repo_remote = github.get_repo("parzh/retryable")
 
 def get_pr_by_commit_sha(commit_sha):
 	issues = github.search_issues(query=commit_sha)
@@ -65,7 +64,7 @@ def show_output_in_console():
 		for pr in list_of_prs:
 			print("\t%s\n\tby @%s\n\t%s\n" % (pr.title, pr.user.login, pr.html_url))
 
-pull_request = repo_remote.get_pull(int(os.environ['PR_NUMBER']))
+pull_request = repo_remote.get_pull(int(os.environ["PR_NUMBER"]))
 
 def post_output_as_message(release_version):
 	message_lines = [
@@ -104,7 +103,7 @@ CHANGE_TYPE = {
 # 0 is erroneous, means unknown type
 release_type = 0
 
-merge_commits_shas = os.environ['MERGES'].split('\n')
+merge_commits_shas = os.environ["MERGES"].split("\n")
 
 for merge_commit_sha in merge_commits_shas:
 	# get PR by its number
