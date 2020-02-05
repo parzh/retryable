@@ -1,0 +1,28 @@
+name: Prepare @next release
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  gather-version:
+    name: Gather release version
+    runs-on: ubuntu-18.04
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      BOT_PERSONAL_ACCESS_TOKEN: ${{ secrets.BOT_PERSONAL_ACCESS_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          python-version: '3.8'
+
+      - run: |2
+          export MERGES="$(git rev-list ${{ github.base_ref }}..${{ github.head_ref }} --merges)"
+          python scripts/gather-release-version.py
