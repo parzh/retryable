@@ -1,7 +1,6 @@
 import os
 import re
 
-from git import Repo
 from github import Github as GitHub
 
 PR_LABEL_SEP = ": "
@@ -18,9 +17,9 @@ def is_change(change_type=None):
 	return is_change_internal
 
 CHANGE_TYPE = {
-	"patch": 1,
+	"major": 3,
 	"minor": 2,
-	"major": 3
+	"patch": 1,
 }
 
 def get_pr_change_type(pr):
@@ -40,19 +39,22 @@ def get_pr_change_type(pr):
 
 	return change_type
 
-PR_NUMBER_PATTERN = "\s#(\d+)\s"
-PR_NUMBER_PATTERN_GROUP_NUMBER = 1
+github = GitHub(os.environ['BOT_PERSONAL_ACCESS_TOKEN'])
 
-def get_pr_number_from_commit(commit):
-	match = re.search(PR_NUMBER_PATTERN, commit.message)
-	number = match.group(PR_NUMBER_PATTERN_GROUP_NUMBER)
+def get_pr_by_commit_sha(commit_sha):
+	results = github.search_issues(query=commit_sha)
 
-	return int(number)
+	if (pr_count := results.totalCount) != 1:
+		raise Exception("Cannot continue: expected 1 PR associated with commit %s, got %i" % (commit_sha, pr_count))
+
+	pr = results.get_page(0)[0]
+
+	return pr
 
 PR_LISTS = {
-	"patch": [],
+	"major": [],
 	"minor": [],
-	"major": []
+	"patch": [],
 }
 
 def show_output_in_console():
@@ -60,8 +62,7 @@ def show_output_in_console():
 		print("'%s' PRs (%i):" % (change_type, len(list_of_prs)))
 
 		for pr in list_of_prs:
-			print('\t%s\n\t by @%s\n\t%s' % (pr.title, pr.user.login, pr.html_url))
-			print("")
+			print("\t%s\n\tby @%s\n\t%s\n" % (pr.title, pr.user.login, pr.html_url))
 
 # ***
 
@@ -69,25 +70,18 @@ def show_output_in_console():
 # 0 is erroneous, means unknown type
 release_type = 0
 
-github = GitHub(os.environ['BOT_PERSONAL_ACCESS_TOKEN'])
 repo_remote = github.get_repo('parzh/retryable')
 pull_request = repo_remote.get_pull(int(os.environ['PR_NUMBER']))
-
 merge_commits_shas = os.environ['MERGES'].split('\n')
-repo_local = Repo.init('.')
 
 for merge_commit_sha in merge_commits_shas:
-	# get merge commit
-	merge_commit = repo_local.commit(merge_commit_sha)
-
-	# find PR number in the message
-	pr_number = get_pr_number_from_commit(merge_commit)
-
 	# get PR by its number
-	pr = repo_remote.get_pull(pr_number)
+	pr = get_pr_by_commit_sha(merge_commit_sha)
 
-	# get and save PR change type
+	# get PR change type
 	pr_change_type = get_pr_change_type(pr)
+
+	# save PR under change type
 	PR_LISTS[pr_change_type].append(pr)
 
 	# update release type, based on the PR change type
@@ -109,11 +103,8 @@ assert release_type <= 3, "Unknown error: unexpected release type"
 # get release version (e.g., 'patch')
 release_version = RELEASE_VERSIONS[release_type]
 
-# get all labels of the remote repo
-repo_remote_labels = repo_remote.get_labels()
-
-# get label that corresponds the release version
-change_label, *other = filter(is_change(release_version), repo_remote_labels)
+# get label from remote that corresponds the release version
+change_label, *other = filter(is_change(release_version), repo_remote.get_labels())
 
 # set the label to the PR
 pull_request.add_to_labels(change_label)
