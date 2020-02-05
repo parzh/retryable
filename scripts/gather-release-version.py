@@ -4,14 +4,14 @@ import re
 from github import Github as GitHub
 
 github = GitHub(os.environ["BOT_PERSONAL_ACCESS_TOKEN"])
-repo_remote = github.get_repo("parzh/retryable")
+repo = github.get_repo("parzh/retryable")
 
 def get_pr_by_commit_sha(commit_sha):
 	issues = github.search_issues(query=commit_sha)
 	prs = []
 
 	for issue in issues:
-		pr = repo_remote.get_pull(issue.number)
+		pr = repo.get_pull(issue.number)
 
 		if pr.head.label != "parzh:develop":
 			prs.append(pr)
@@ -64,7 +64,7 @@ def show_output_in_console():
 		for pr in list_of_prs:
 			print("\t%s\n\tby @%s\n\t%s\n" % (pr.title, pr.user.login, pr.html_url))
 
-pull_request = repo_remote.get_pull(int(os.environ["PR_NUMBER"]))
+pull_request = repo.get_pull(int(os.environ["PR_NUMBER"]))
 
 def post_output_as_message(release_version):
 	message_lines = [
@@ -135,7 +135,7 @@ assert release_type <= 3, "Unknown error: unexpected release type"
 release_version = RELEASE_VERSIONS[release_type]
 
 # get label from remote that corresponds the release version
-change_label, *other = filter(is_change(release_version), repo_remote.get_labels())
+change_label, *other = filter(is_change(release_version), repo.get_labels())
 
 # set the label to the PR
 pull_request.add_to_labels(change_label)
