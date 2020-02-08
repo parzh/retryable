@@ -34,7 +34,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: git fetch --no-tags --prune origin --unshallow
+      - run: git fetch origin --no-tags --prune --unshallow
 
       - uses: actions/setup-python@v1
         with:
