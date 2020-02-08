@@ -44,5 +44,16 @@ jobs:
 
       - run: |2
           set -e
-          export MERGES="$(git rev-list --merges --first-parent --reverse origin/master..origin/develop)"
+
+          HEAD=origin/develop
+          BASE=origin/master
+
+          commit_sha() { git log -1 --format='%H' $1; }
+
+          filename=$TMP/merges_$(commit_sha $BASE)_$(commit_sha $HEAD)
+
+          git rev-list $BASE..$HEAD --merges --first-parent --reverse > ${filename}
+
+          export MERGES="$(cat ${filename})"
+
           python scripts/gather-release-version.py
