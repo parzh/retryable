@@ -50,7 +50,9 @@ jobs:
 
           commit_sha() { git log -1 --format='%H' $1; }
 
-          filename=$TMP/merges_$(commit_sha $BASE)_$(commit_sha $HEAD)
+          filename=merges_$(commit_sha $BASE)_$(commit_sha $HEAD)
+
+          chmod +x ${filename}
 
           git rev-list $BASE..$HEAD --merges --first-parent --reverse > ${filename}
 
