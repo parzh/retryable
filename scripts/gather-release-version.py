@@ -4,11 +4,11 @@ import re
 from sys import argv
 from github import Github
 
-github = Github(os.environ["BOT_PERSONAL_ACCESS_TOKEN"])
-repo = github.get_repo("parzh/retryable")
+ghub = Github(os.environ["BOT_PERSONAL_ACCESS_TOKEN"])
+repo = ghub.get_repo("parzh/retryable")
 
 def get_pr_by_commit_sha(commit_sha):
-	issues = github.search_issues(query=commit_sha)
+	issues = ghub.search_issues(query=commit_sha)
 	prs = []
 
 	for issue in issues:
