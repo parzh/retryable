@@ -1,9 +1,10 @@
 import os
 import re
 
-from github import Github as GitHub
+from sys import argv
+from github import Github
 
-github = GitHub(os.environ["BOT_PERSONAL_ACCESS_TOKEN"])
+github = Github(os.environ["BOT_PERSONAL_ACCESS_TOKEN"])
 repo = github.get_repo("parzh/retryable")
 
 def get_pr_by_commit_sha(commit_sha):
@@ -103,7 +104,7 @@ CHANGE_TYPE = {
 # 0 is erroneous, means unknown type
 release_type = 0
 
-merge_commits_shas = os.environ["MERGES"].split("\n")
+merge_commits_shas = argv[1].split("\n")
 
 for merge_commit_sha in merge_commits_shas:
 	# get PR by its number
