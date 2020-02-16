@@ -18,7 +18,7 @@ def get_pr_by_commit_sha(commit_sha):
 			prs.append(pr)
 
 	if (pr_count := len(prs)) != 1:
-		raise Exception("Cannot continue: expected 1 PR associated with commit %s, got %i" % (commit_sha, pr_count))
+		raise Exception(f"Cannot continue: expected 1 PR associated with commit {commit_sha}, got {pr_count}")
 
 	return prs[0]
 
@@ -46,7 +46,7 @@ def get_pr_change_type(pr):
 			raise "Found no change labels"
 
 	except str as error:
-		raise Exception("%s on PR #%i; please debug 'check-pr-labels.yml' workflow" % (error, pr.number))
+		raise Exception(f'{error} on PR #{pr.number}; please debug "check-pr-labels.yml" workflow')
 
 	key, change_type = label.name.split(PR_LABEL_SEP)
 
@@ -60,10 +60,10 @@ PR_LISTS = {
 
 def show_output_in_console():
 	for change_type, list_of_prs in PR_LISTS.items():
-		print("%s (%i):" % (change_type, len(list_of_prs)))
+		print(f"{ change_type} ({ len(list_of_prs) }):")
 
 		for pr in list_of_prs:
-			print("\t%s\n\tby @%s\n\t%s\n" % (pr.title, pr.user.login, pr.html_url))
+			print(f"\t{pr.title}\n\tby @{pr.user.login}\n\t{pr.html_url}\n")
 
 pull_request = repo.get_pull(int(os.environ["PR_NUMBER"]))
 
@@ -71,7 +71,7 @@ def post_output_as_message(release_version):
 	message_lines = [
 		"Hello 👋! Pardon the interruption.",
 		"",
-		"I've figured out that this pull request represents a '**%s**' release." % (release_version),
+		f"I've figured out that this pull request represents a '**{release_version}**' release.",
 		"",
 		"Below you can see a list of other pull requests that will be merged by merging this one.",
 		"",
@@ -79,12 +79,12 @@ def post_output_as_message(release_version):
 
 	for change_type, list_of_prs in PR_LISTS.items():
 		message_lines.extend([
-			"#### Pull requests with `%s` change (%i):" % (change_type, len(list_of_prs)),
+			f"#### Pull requests with `{change_type}` change ({ len(list_of_prs) }):",
 			"",
 		])
 
 		for pr in list_of_prs:
-			message_lines.append("- #%i" % (pr.number))
+			message_lines.append(f"- #{pr.number}")
 
 		message_lines.append("")
 
@@ -159,7 +159,7 @@ release_version = RELEASE_VERSIONS[release_type]
 change_label = get_pr_change_label(release_version)
 
 # show all the outputs
-print('Automatically added label "%s" to pull request #%i' % (change_label.name, pull_request.number))
+print(f'Automatically added label "{change_label.name}" to pull request #{pull_request.number}')
 print("")
 show_output_in_console()
 post_output_as_message(release_version)
