@@ -15,10 +15,11 @@ def get_pr_by_commit_sha(commit_sha):
 		pr = repo.get_pull(issue.number)
 
 		if pr.head.label != "parzh:develop":
-			prs.append(pr)
+			if not prs:
+				prs.append(pr)
 
-	if (pr_count := len(prs)) != 1:
-		raise Exception(f"Cannot continue: expected 1 PR associated with commit {commit_sha}, got {pr_count}")
+			else:
+				raise Exception(f"Got >1 PRs associated with commit {commit_sha}")
 
 	return prs[0]
 
