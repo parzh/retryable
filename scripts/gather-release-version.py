@@ -71,7 +71,7 @@ def post_output_as_message(release_version):
 	message_lines = [
 		"Hello 👋! Pardon the interruption.",
 		"",
-		f"I've figured out that this pull request represents a '**{release_version}**' release.",
+		f"I've figured out that this pull request represents a **`{release_version}`** release.",
 		"",
 		"Below you can see a list of other pull requests that will be merged by merging this one.",
 		"",
