@@ -1,6 +1,6 @@
 import os
-import re
 
+from re import sub as replace
 from sys import argv
 from github import Github
 
@@ -58,42 +58,6 @@ PR_LISTS = {
 	"patch": [],
 }
 
-def show_output_in_console():
-	for change_type, list_of_prs in PR_LISTS.items():
-		print(f"{ change_type} ({ len(list_of_prs) }):")
-
-		for pr in list_of_prs:
-			print(f"\t{pr.title}\n\tby @{pr.user.login}\n\t{pr.html_url}\n")
-
-pull_request = repo.get_pull(int(os.environ["PR_NUMBER"]))
-
-def post_output_as_message(release_version):
-	message_lines = [
-		"Hello 👋! Pardon the interruption.",
-		"",
-		f"I've figured out that this pull request represents a **`{release_version}`** release.",
-		"",
-		"Below you can see a list of other pull requests that will be merged by merging this one.",
-		"",
-	]
-
-	for change_type, list_of_prs in PR_LISTS.items():
-		message_lines.extend([
-			f"#### Pull requests with `{change_type}` change ({ len(list_of_prs) }):",
-			"",
-		])
-
-		for pr in list_of_prs:
-			message_lines.append(f"- #{pr.number}")
-
-		message_lines.append("")
-
-	message = "\n".join(message_lines).replace("\n\n\n", "\n\n")
-
-	pull_request.create_issue_comment(message)
-
-# ***
-
 CHANGE_TYPE = {
 	"major": 3,
 	"minor": 2,
@@ -121,7 +85,23 @@ for merge_commit_sha in merge_commits_shas:
 
 # ***
 
-def get_pr_change_label(release_version):
+pull_request = repo.get_pull(int(os.environ["PR_NUMBER"]))
+
+RELEASE_VERSIONS = [
+	None,
+	"patch",
+	"minor",
+	"major"
+]
+
+# verify that 'release_type' is valid
+assert release_type, "Could not gather release version"
+assert release_type <= 3, "Unknown error: unexpected release type"
+
+# get release version (e.g., 'patch')
+release_version = RELEASE_VERSIONS[release_type]
+
+def get_pr_change_label():
 	# get all change labels from remote
 	change_labels = list(filter(is_change(), repo.get_labels()))
 
@@ -141,25 +121,56 @@ def get_pr_change_label(release_version):
 
 	return change_label
 
-RELEASE_VERSIONS = [
-	None,
-	"patch",
-	"minor",
-	"major"
-]
-
-# verify that 'release_type' is valid
-assert release_type, "Could not gather release version"
-assert release_type <= 3, "Unknown error: unexpected release type"
-
-# get release version (e.g., 'patch')
-release_version = RELEASE_VERSIONS[release_type]
-
 # set the label to the PR
 change_label = get_pr_change_label(release_version)
 
 # show all the outputs
-print(f'Automatically added label "{change_label.name}" to pull request #{pull_request.number}')
-print("")
-show_output_in_console()
-post_output_as_message(release_version)
+def joint(lines):
+	return replace(r"\n{2,}", "\n\n", "\n".join(lines))
+
+def compose_output_console():
+	console_lines = [
+		f"Automatically added label \"{change_label.name}\" to pull request #{pull_request.number}",
+		"",
+	]
+
+	for change_type, list_of_prs in PR_LISTS.items():
+		console_lines.append(f"{ change_type} ({ len(list_of_prs) }):")
+
+		for pr in list_of_prs:
+			console_lines.extend([
+				f"\t{pr.title}",
+				f"\tby @{pr.user.login}",
+				f"\t{pr.html_url}",
+				""
+			])
+
+		console_lines.append("")
+
+	return joint(console_lines)
+
+def compose_output_comment():
+	comment_lines = [
+		"Hello 👋! Pardon the interruption.",
+		"",
+		f"I've figured out that this pull request represents a **`{release_version}`** release.",
+		"",
+		"Below you can see a list of other pull requests that will be merged by merging this one.",
+		"",
+	]
+
+	for change_type, list_of_prs in PR_LISTS.items():
+		comment_lines.extend([
+			f"#### Pull requests with `{change_type}` change ({ len(list_of_prs) }):",
+			"",
+		])
+
+		for pr in list_of_prs:
+			comment_lines.append(f"- #{pr.number}")
+
+		comment_lines.append("")
+
+	return joint(comment_lines)
+
+print(compose_output_console())
+pull_request.create_issue_comment(compose_output_comment())
