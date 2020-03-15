@@ -29,6 +29,8 @@ jobs:
     runs-on: ubuntu-18.04
     needs: [check-head]
     env:
+      PR_HEAD: origin/develop
+      PR_BASE: origin/master
       PR_NUMBER: ${{ github.event.pull_request.number }}
       BOT_PERSONAL_ACCESS_TOKEN: ${{ secrets.BOT_PERSONAL_ACCESS_TOKEN }}
 
@@ -45,17 +47,10 @@ jobs:
       - run: |2
           set -e
 
-          HEAD=origin/develop
-          BASE=origin/master
-
           commit_sha() { git log -1 --format='%H' $1; }
 
-          filename=merges_$(commit_sha $BASE)_$(commit_sha $HEAD)
+          filename=merges_$(commit_sha $PR_BASE)_$(commit_sha $PR_HEAD)
 
-          git rev-list $BASE..$HEAD --merges --first-parent --reverse > ${filename}
+          git rev-list $PR_BASE..$PR_HEAD --merges --first-parent --reverse > $filename
 
-          chmod +x ${filename}
-
-          export MERGES="$(cat ${filename})"
-
-          python scripts/gather-release-version.py
+          python scripts/gather-release-version.py "$(cat $filename)"
