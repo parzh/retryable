@@ -25,7 +25,7 @@
     "lint": "eslint --ext .ts src test",
     "clean": "rimraf dist/*",
     "prebuild": "npm run clean",
-    "build": "ncc build src/index.ts --out dist --minify",
+    "build": "tsc --build src",
     "prepublishOnly": "npm ci && npm run build && npm test",
     "postpublish": "git push --follow-tags"
   },
@@ -52,7 +52,6 @@
     "@types/node": "13.9.1",
     "@typescript-eslint/eslint-plugin": "2.23.0",
     "@typescript-eslint/parser": "2.23.0",
-    "@zeit/ncc": "0.21.1",
     "cross-env": "7.0.2",
     "eslint": "6.8.0",
     "jest": "26.0.1",
