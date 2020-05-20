@@ -1,4 +1,4 @@
-/** @internal */
+/** @public */
 type PromiseConstructorParameters =
 	| Parameters<ConstructorParameters<PromiseConstructor>[0]>
 	;

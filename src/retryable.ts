@@ -1,14 +1,10 @@
-import Action from "./typings/action";
-import Retryer from "./typings/retryer";
-import asNatural from "./assert/natural";
-import asNonNegative from "./assert/non-negative";
+import type Action from "./typings/action";
+import type Retryer from "./typings/retryer";
+import assertNatural from "./assert-natural.impl";
+import assertNonNegative from "./assert-non-negative.impl";
 
 /** @private */
-interface Private {
-	retryCount: number;
-	resettingRetryCountTo: number | null;
-	retryTimeoutId: NodeJS.Timer | null;
-}
+type Maybe<Value> = Value | null;
 
 /** @private */
 const RETRY_COUNT_DEFAULT = 0;
@@ -50,20 +46,32 @@ const RETRY_COUNT_DEFAULT = 0;
  */
 export default function retryable<Value = unknown>(action: Action<Value>): Promise<Value> {
 	/** @private */
-	const __: Private = {
-		retryCount: RETRY_COUNT_DEFAULT,
-		resettingRetryCountTo: null,
-		retryTimeoutId: null,
-	};
+	let _retryCount: number = RETRY_COUNT_DEFAULT;
+
+	/** @private */
+	let _nextRetryCount: Maybe<number> = null;
+
+	/** @private */
+	let _retryTimeoutId: Maybe<NodeJS.Timer> = null;
+
+	/** @private */
+	function updateRetryCount(): void {
+		if (_nextRetryCount != null) {
+			_retryCount = _nextRetryCount;
+			_nextRetryCount = null;
+		} else {
+			_retryCount += 1;
+		}
+	}
 
 	function resetRetryCount(argumentRequired: boolean, retryCountExplicit = RETRY_COUNT_DEFAULT): void {
 		if (!argumentRequired)
 			retryCountExplicit = retryCountExplicit ?? RETRY_COUNT_DEFAULT;
 
 		if (retryCountExplicit !== RETRY_COUNT_DEFAULT)
-			asNatural(retryCountExplicit, "new value of retryCount");
+			assertNatural(retryCountExplicit, "new value of retryCount");
 
-		__.resettingRetryCountTo = retryCountExplicit;
+		_nextRetryCount = retryCountExplicit;
 	}
 
 	return new Promise<Value>((resolve, reject) => {
@@ -77,21 +85,11 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 				retry as Retryer,
 
 				/** @deprecated Use `count` property of the `retry` argument */
-				__.retryCount,
+				_retryCount,
 
 				/** @deprecated Use `setCount` property of the `retry` argument */
 				resetRetryCount.bind(null, false),
 			);
-		}
-
-		/** @private */
-		function updateRetryCount(): void {
-			if (__.resettingRetryCountTo != null) {
-				__.retryCount = __.resettingRetryCountTo;
-				__.resettingRetryCountTo = null;
-			} else {
-				__.retryCount += 1;
-			}
 		}
 
 		function retry(): void {
@@ -100,18 +98,18 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		}
 
 		function retryAfter(msec: number): void {
-			asNonNegative(msec, "retry delay");
-			__.retryTimeoutId = setTimeout(retry, msec);
+			assertNonNegative(msec, "retry delay");
+			_retryTimeoutId = setTimeout(retry, msec);
 		}
 
 		function retryCancel(): void {
-			if (__.retryTimeoutId)
-				clearTimeout(__.retryTimeoutId);
+			if (_retryTimeoutId != null)
+				clearTimeout(_retryTimeoutId);
 		}
 
 		Object.defineProperty(retry, "count", {
 			get(): number {
-				return __.retryCount;
+				return _retryCount;
 			},
 
 			set(): never {
