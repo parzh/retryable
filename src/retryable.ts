@@ -1,5 +1,5 @@
-import Action from "./typings/action";
-import Retryer from "./typings/retryer";
+import type Action from "./typings/action";
+import type Retryer from "./typings/retryer";
 import assertNatural from "./assert-natural.impl";
 import assertNonNegative from "./assert-non-negative.impl";
 
