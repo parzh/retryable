@@ -5,6 +5,7 @@
     "target": "ES5",
     "outDir": "dist",
     "declaration": true,
+    "stripInternal": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
 

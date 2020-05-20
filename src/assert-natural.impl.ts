@@ -1,5 +1,6 @@
-import assertNonNegative from "./assert-non-negative";
+import assertNonNegative from "./assert-non-negative.impl";
 
+/** @internal */
 export default function assertNatural(value: any, role = "value"): asserts value is number {
 	assertNonNegative(value);
 
