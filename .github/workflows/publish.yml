@@ -27,6 +27,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - run: npm ci
+
       # The "prepublishOnly" npm script builds and
       # tests everything before the actual publish
-      - run: npm publish
+      - name: Publish
+        run: |2
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > .npmrc
+
+          npm publish
