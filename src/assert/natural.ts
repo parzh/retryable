@@ -1,3 +1,8 @@
-import { valuer } from "@valuer/main";
+import assertNonNegative from "./non-negative";
 
-export default valuer.as<number>("primitive", "non-negative", "integer");
+export default function assertNatural(value: any, role = "value"): asserts value is number {
+	assertNonNegative(value);
+
+	if (value % 1 !== 0)
+		throw new Error(`${ role } is not an integer: ${ value }`);
+}

@@ -1,7 +1,7 @@
 import Action from "./typings/action";
 import Retryer from "./typings/retryer";
-import asNatural from "./assert/natural";
-import asNonNegative from "./assert/non-negative";
+import assertNatural from "./assert/natural";
+import assertNonNegative from "./assert/non-negative";
 
 /** @private */
 interface Private {
@@ -61,7 +61,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			retryCountExplicit = retryCountExplicit ?? RETRY_COUNT_DEFAULT;
 
 		if (retryCountExplicit !== RETRY_COUNT_DEFAULT)
-			asNatural(retryCountExplicit, "new value of retryCount");
+			assertNatural(retryCountExplicit, "new value of retryCount");
 
 		__.resettingRetryCountTo = retryCountExplicit;
 	}
@@ -100,7 +100,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		}
 
 		function retryAfter(msec: number): void {
-			asNonNegative(msec, "retry delay");
+			assertNonNegative(msec, "retry delay");
 			__.retryTimeoutId = setTimeout(retry, msec);
 		}
 
