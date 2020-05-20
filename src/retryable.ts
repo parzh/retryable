@@ -54,6 +54,16 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 	/** @private */
 	let _retryTimeoutId: Maybe<NodeJS.Timer> = null;
 
+	/** @private */
+	function updateRetryCount(): void {
+		if (_nextRetryCount != null) {
+			_retryCount = _nextRetryCount;
+			_nextRetryCount = null;
+		} else {
+			_retryCount += 1;
+		}
+	}
+
 	function resetRetryCount(argumentRequired: boolean, retryCountExplicit = RETRY_COUNT_DEFAULT): void {
 		if (!argumentRequired)
 			retryCountExplicit = retryCountExplicit ?? RETRY_COUNT_DEFAULT;
@@ -80,16 +90,6 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 				/** @deprecated Use `setCount` property of the `retry` argument */
 				resetRetryCount.bind(null, false),
 			);
-		}
-
-		/** @private */
-		function updateRetryCount(): void {
-			if (_nextRetryCount != null) {
-				_retryCount = _nextRetryCount;
-				_nextRetryCount = null;
-			} else {
-				_retryCount += 1;
-			}
 		}
 
 		function retry(): void {
