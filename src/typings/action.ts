@@ -1,6 +1,6 @@
-import Resolver from "./resolver";
-import Rejecter from "./rejecter";
-import Retryer from "./retryer";
+import type Resolver from "./resolver";
+import type Rejecter from "./rejecter";
+import type Retryer from "./retryer";
 
 export default interface Action<Value = unknown> {
 	(

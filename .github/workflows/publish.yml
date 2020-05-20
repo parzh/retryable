@@ -1,0 +1,32 @@
+name: Publish
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - closed
+
+jobs:
+  tests:
+    name: Test package
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - run: npm run lint
+
+  publish:
+    name: Publish as @latest
+    runs-on: ubuntu-latest
+    needs: [tests]
+    steps:
+      - uses: actions/checkout@v2
+
+      # The "prepublishOnly" npm script builds and
+      # tests everything before the actual publish
+      - run: npm publish

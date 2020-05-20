@@ -26,28 +26,15 @@ describe("retry.setCount()", () => {
 		expect(didReset).toBe(true);
 	}, TIMEOUT_MARGIN);
 
-	it("forbids explicit values of retryCount being negative numbers", async () => {
-		try {
-			await retryable((resolve, reject, retry) => {
-				retry.setCount(-14);
-			});
+	test.each([
+		[ "negative numbers", -4, "is negative" ],
+		[ "non-integers", 42.17, "not an integer" ],
+	])("forbids explicit values of retryCount being %s", async (name, count, error) => {
+		const promise = retryable((resolve, reject, retry) => {
+			retry.setCount(count);
+		});
 
-			fail("Function did not throw");
-		} catch (error) {
-			expect(error.message).toContain("a negative number");
-		}
-	});
-
-	it("forbids explicit values of retryCount being non-integers", async () => {
-		try {
-			await retryable((resolve, reject, retry) => {
-				retry.setCount(42.17);
-			});
-
-			fail("Function did not throw");
-		} catch (error) {
-			expect(error.message).toContain("not an integer");
-		}
+		await expect(promise).rejects.toThrowError(error);
 	});
 });
 
