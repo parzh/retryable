@@ -23,15 +23,11 @@ describe("retry.after()", () => {
 	}, TIMEOUT_MARGIN + WAIT_TIME);
 
 	it("forbids negative delays", async () => {
-		try {
-			await retryable((resolve, reject, retry) => {
-				retry.after(-14);
-			});
+		const promise = retryable((resolve, reject, retry) => {
+			retry.after(-14);
+		});
 
-			fail("Function did not throw");
-		} catch (error) {
-			expect(error.message).toContain("a negative number");
-		}
+		await expect(promise).rejects.toThrowError("is negative");
 	});
 
 	it("allows positive non-integer delays", () => {
