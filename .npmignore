@@ -1,8 +1,8 @@
-# auxilliary stuff
-node_modules
-.cache
-.github
-dist/*.tsbuildinfo
+# omit definitions for implementation-only files
+dist/**/*.impl.d.ts
 
-# dev stuff
-src
+# omit implementation for definitions-only files
+dist/typings/*.js
+
+# omit tsc build cache
+dist/*.tsbuildinfo

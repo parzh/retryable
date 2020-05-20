@@ -18,6 +18,10 @@
   "bugs": {
     "url": "https://github.com/parzh/retryable/issues"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "jest": {
