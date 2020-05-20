@@ -34,7 +34,7 @@ describe("retry.setCount()", () => {
 
 			fail("Function did not throw");
 		} catch (error) {
-			expect(error.message).toContain("value is negative");
+			expect(error.message).toContain("is negative");
 		}
 	});
 
