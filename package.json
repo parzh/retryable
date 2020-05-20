@@ -52,6 +52,9 @@
     "postbuild": "npm run clean:spare",
     "prepublishOnly": "npm ci && npm run build && npm test"
   },
+  "peerDependencies": {
+    "typescript": ">=3.8"
+  },
   "devDependencies": {
     "@types/jest": "25.1.4",
     "@types/node": "13.9.1",
