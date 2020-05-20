@@ -1,7 +1,7 @@
 import assertNonNegative from "./assert-non-negative.impl";
 
 /** @internal */
-export default function assertNatural(value: any, role = "value"): asserts value is number {
+export default function assertNatural(value: unknown, role = "value"): asserts value is number {
 	assertNonNegative(value);
 
 	if (value % 1 !== 0)
