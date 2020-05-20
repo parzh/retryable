@@ -1,6 +1,6 @@
 {
   "name": "@parzh/retryable",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "",
   "author": "Dima Parzhitsky <parzhitsky@gmail.com>",
   "license": "MIT",
@@ -51,6 +51,9 @@
     "build": "tsc --build src",
     "postbuild": "npm run clean:spare",
     "prepublishOnly": "npm ci && npm run build && npm test"
+  },
+  "peerDependencies": {
+    "typescript": ">=3.8"
   },
   "devDependencies": {
     "@types/jest": "25.1.4",
