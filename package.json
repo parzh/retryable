@@ -2,9 +2,8 @@
   "name": "@parzh/retryable",
   "version": "1.4.1",
   "description": "",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "repository": "github:parzh/retryable",
+  "author": "Dima Parzhitsky <parzhitsky@gmail.com>",
+  "license": "MIT",
   "keywords": [
     "retryable",
     "retryer",
@@ -14,21 +13,13 @@
     "retry count",
     "retryCount"
   ],
-  "author": "Dima Parzhitsky <parzhitsky@gmail.com>",
-  "license": "MIT",
+  "repository": "github:parzh/retryable",
   "homepage": "https://github.com/parzh/retryable#readme",
   "bugs": {
     "url": "https://github.com/parzh/retryable/issues"
   },
-  "scripts": {
-    "test": "cross-env NODE_OPTIONS='--unhandled-rejections=strict' jest",
-    "lint": "eslint --ext .ts src test",
-    "clean": "rimraf dist/*",
-    "prebuild": "npm run clean",
-    "build": "tsc --build src",
-    "prepublishOnly": "npm ci && npm run build && npm test",
-    "postpublish": "git push --follow-tags"
-  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
@@ -46,6 +37,17 @@
     "restoreMocks": true,
     "errorOnDeprecated": true,
     "cacheDirectory": "<rootDir>/.cache/jest"
+  },
+  "scripts": {
+    "test": "cross-env NODE_OPTIONS='--unhandled-rejections=strict' jest",
+    "lint": "eslint --ext .ts src test",
+    "clean": "rimraf dist/*",
+    "clean:spare": "rimraf dist/**/*.impl.d.ts dist/typings/*.js",
+    "prebuild": "npm run clean",
+    "build": "tsc --build src",
+    "postbuild": "npm run clean:spare",
+    "prepublishOnly": "npm ci && npm run build && npm test",
+    "postpublish": "git push --follow-tags"
   },
   "devDependencies": {
     "@types/jest": "25.1.4",
