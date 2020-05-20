@@ -1,7 +1,7 @@
 import Action from "./typings/action";
 import Retryer from "./typings/retryer";
-import assertNatural from "./assert/natural";
-import assertNonNegative from "./assert/non-negative";
+import assertNatural from "./assert-natural";
+import assertNonNegative from "./assert-non-negative";
 
 /** @private */
 interface Private {
