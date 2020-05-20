@@ -50,8 +50,7 @@
     "prebuild": "npm run clean",
     "build": "tsc --build src",
     "postbuild": "npm run clean:spare",
-    "prepublishOnly": "npm ci && npm run build && npm test",
-    "postpublish": "git push --follow-tags"
+    "prepublishOnly": "npm ci && npm run build && npm test"
   },
   "devDependencies": {
     "@types/jest": "25.1.4",
