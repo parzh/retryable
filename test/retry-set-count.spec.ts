@@ -29,7 +29,8 @@ describe("retry.setCount()", () => {
 	test.each([
 		[ "negative numbers", -4, "is negative" ],
 		[ "non-integers", 42.17, "not an integer" ],
-	])("forbids explicit values of retryCount being %s", async (name, count, error) => {
+		[ "NaNs", NaN, "is not a number" ],
+	])("forbids %s", async (name, count, error) => {
 		const promise = retryable((resolve, reject, retry) => {
 			retry.setCount(count);
 		});

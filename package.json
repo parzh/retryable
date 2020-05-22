@@ -1,6 +1,6 @@
 {
   "name": "@parzh/retryable",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "",
   "author": "Dima Parzhitsky <parzhitsky@gmail.com>",
   "license": "MIT",
@@ -19,8 +19,11 @@
     "url": "https://github.com/parzh/retryable/issues"
   },
   "files": [
-    "dist",
-    "README.md"
+    "/dist",
+    "!/dist/**/*.impl.d.ts",
+    "!/dist/typings/*.js",
+    "!/dist/*.tsbuildinfo",
+    "/README.md"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -46,10 +49,8 @@
     "test": "cross-env NODE_OPTIONS='--unhandled-rejections=strict' jest",
     "lint": "eslint --ext .ts src test",
     "clean": "rimraf dist/*",
-    "clean:spare": "rimraf dist/**/*.impl.d.ts dist/typings/*.js",
     "prebuild": "npm run clean",
     "build": "tsc --build src",
-    "postbuild": "npm run clean:spare",
     "prepublishOnly": "npm ci && npm run build && npm test"
   },
   "peerDependencies": {
