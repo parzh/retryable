@@ -1,5 +1,4 @@
 import retryable from "../src/retryable";
-import { TIMEOUT_MARGIN } from "./helpers/time";
 
 /** @private */
 const RETRIES_BEFORE_RESET = 5;
@@ -24,7 +23,7 @@ describe("retry.setCount()", () => {
 
 		expect(lastRetryCount).toBe(0);
 		expect(didReset).toBe(true);
-	}, TIMEOUT_MARGIN);
+	});
 
 	test.each([
 		[ "negative numbers", -4, "is negative" ],

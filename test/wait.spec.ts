@@ -16,4 +16,4 @@ it("resolves immediately (asynchronously) if no time is provided", async () => {
 	await wait();
 
 	expect(time()).toBeCloseTo(start);
-}, TIMEOUT_MARGIN);
+});

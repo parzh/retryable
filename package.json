@@ -35,6 +35,9 @@
     "roots": [
       "<rootDir>/test"
     ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/set-timeout.ts"
+    ],
     "testMatch": [
       "**/*.spec.[jt]s"
     ],
