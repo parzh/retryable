@@ -1,8 +1,1 @@
-# omit definitions for implementation-only files
-dist/**/*.impl.d.ts
-
-# omit implementation for definitions-only files
-dist/typings/*.js
-
-# omit tsc build cache
-dist/*.tsbuildinfo
+# see: package.json -> "files" array -> entries that start with "!"

@@ -22,12 +22,15 @@ describe("retry.after()", () => {
 		expect(retried).toBe(true);
 	}, TIMEOUT_MARGIN + WAIT_TIME);
 
-	it("forbids negative delays", async () => {
+	test.each([
+		[ "negative delays", -4, "is negative" ],
+		[ "NaNs", NaN, "is not a number" ],
+	])("forbids %s", async (name, delay, error) => {
 		const promise = retryable((resolve, reject, retry) => {
-			retry.after(-14);
+			retry.after(delay);
 		});
 
-		await expect(promise).rejects.toThrowError("is negative");
+		await expect(promise).rejects.toThrowError(error);
 	});
 
 	it("allows positive non-integer delays", () => {
