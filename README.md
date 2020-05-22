@@ -10,7 +10,7 @@
 
 # @parzh/retryable
 
-Convenience function to retry executing an action, untill a desired result is achieved
+Convenience function to retry executing an action, until a desired result is achieved
 
 ## Installation
 
