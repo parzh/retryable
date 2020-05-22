@@ -8,7 +8,7 @@
   </a>
 </p>
 
-# @parzh/retryable
+# `@parzh/retryable`
 
 Convenience function to retry executing an action, until a desired result is achieved
 
