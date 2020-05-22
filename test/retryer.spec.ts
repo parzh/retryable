@@ -1,5 +1,4 @@
 import retryable from "../src/retryable";
-import { TIMEOUT_MARGIN } from "./helpers/time";
 
 describe("retry()", () => {
 	it("allows retrying the action", async () => {
@@ -13,5 +12,5 @@ describe("retry()", () => {
 
 			else resolve();
 		});
-	}, TIMEOUT_MARGIN);
+	});
 });
