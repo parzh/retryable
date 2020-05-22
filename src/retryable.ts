@@ -73,10 +73,10 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 				// eslint-disable-next-line @typescript-eslint/no-use-before-define
 				retry as Retryer,
 
-				/** @deprecated Use `count` property of the `retry` argument */
-				_retryCount,
+				// arguments below are deprecated,
+				// left for backwards compatibility
 
-				/** @deprecated Use `setCount` property of the `retry` argument */
+				_retryCount,
 				resetRetryCount.bind(null, false),
 			);
 		}
