@@ -16,30 +16,19 @@ const RETRY_COUNT_DEFAULT = 0;
  * const content = await retryable((resolve, reject, retry) => {
  *   fs.readfile("/path/to/file", (err, data) => {
  *     if (!err)
- *       // no errors occured
  *       return resolve(data);
- *
- *     // Here: an error occured
  *
  *     if (retry.count >= RETRY_LIMIT)
  *       if (SHOULD_IGNORE_RETRY_LIMIT)
- *         // retry limit reached
- *         // retry limit is ignored
  *         retry.setCount(0);
  *
  *       else
- *         // retry limit reached
- *         // retry limit is respected
  *         return reject("Retry limit reached!");
  *
- *     // Here: retry limit is not reached or ignored
- *
  *     if (SHOULD_RETRY_IMMEDIATELY)
- *       // retrying immediately
  *       retry();
  *
  *     else
- *       // retrying after {2^retries × 100} milliseconds
  *       retry.after(2 ** retry.count * 100);
  *   });
  * });
@@ -84,10 +73,10 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 				// eslint-disable-next-line @typescript-eslint/no-use-before-define
 				retry as Retryer,
 
-				/** @deprecated Use `count` property of the `retry` argument */
-				_retryCount,
+				// arguments below are deprecated,
+				// left for backwards compatibility
 
-				/** @deprecated Use `setCount` property of the `retry` argument */
+				_retryCount,
 				resetRetryCount.bind(null, false),
 			);
 		}
