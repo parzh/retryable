@@ -1,5 +1,5 @@
 // @ts-check
-const module_ = require("../src");
+const module_ = require("../src"); // eslint-disable-line @typescript-eslint/no-var-requires
 
 describe('const retryable = require("@parzh/retryable")', () => {
 	it("imports the whole module", () => {
