@@ -31,27 +31,25 @@ const content = await retryable((resolve, reject, retry) => {
       // no errors occured
       return resolve(data);
 
-    // otherwise: an error occured
+    // here: an error occured
 
     if (retry.count >= RETRY_LIMIT)
       if (SHOULD_IGNORE_RETRY_LIMIT)
-        // retry limit reached
-        // retry limit is ignored
+        // retry limit reached, but ignored
         retry.setCount(0);
 
       else
         // retry limit reached
-        // retry limit is respected
         return reject("Retry limit reached!");
 
-    // otherwise: retry limit is not reached or ignored
+    // here: retry limit is ignored or not reached
 
     if (SHOULD_RETRY_IMMEDIATELY)
       // retrying immediately
       retry();
 
     else
-      // retrying after {2^retries × 100} milliseconds
+      // retrying after exponential backoff (see https://en.wikipedia.org/wiki/Exponential_backoff)
       retry.after(2 ** retry.count * 100);
   });
 });
