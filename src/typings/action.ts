@@ -8,11 +8,9 @@ export default interface Action<Value = unknown> {
 		reject: Rejecter,
 		retry: Retryer,
 
-		/** @deprecated Use `retry.count` */
 		// eslint-disable-next-line @typescript-eslint/camelcase
 		DEPRECATED__retryCount: number,
 
-		/** @deprecated Use `retry.setCount(0)` */
 		// eslint-disable-next-line @typescript-eslint/camelcase
 		DEPRECATED__resetRetryCount: (count?: number) => void,
 	): unknown;
