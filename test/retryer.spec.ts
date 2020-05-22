@@ -12,5 +12,7 @@ describe("retry()", () => {
 
 			else resolve();
 		});
+
+		expect(retried).toBe(true);
 	});
 });

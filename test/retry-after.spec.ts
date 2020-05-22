@@ -44,6 +44,6 @@ describe("retry.after()", () => {
 			retry.after(42.17);
 		});
 
-		expect(promise).resolves.toBeUndefined();
+		return expect(promise).resolves.toBeUndefined();
 	});
 });
