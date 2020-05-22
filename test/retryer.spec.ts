@@ -2,17 +2,26 @@ import retryable from "../src/retryable";
 
 describe("retry()", () => {
 	it("allows retrying the action", async () => {
-		let retried = false;
+		let status: "initial" | "retried" | "resolved" | "rejected" = "initial";
 
 		await retryable((resolve, reject, retry) => {
-			if (!retried) {
-				retried = true;
-				retry();
+			if (status === "initial") {
+				status = "retried";
+				return retry();
 			}
 
-			else resolve();
+			if (status === "retried") {
+				status = "resolved";
+				return resolve();
+			}
+
+			// should never happen:
+			if (status === "resolved") {
+				status = "rejected";
+				return reject();
+			}
 		});
 
-		expect(retried).toBe(true);
+		expect(status).toBe("resolved");
 	});
 });
