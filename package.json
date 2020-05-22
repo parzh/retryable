@@ -36,7 +36,8 @@
       "<rootDir>/test"
     ],
     "setupFilesAfterEnv": [
-      "<rootDir>/test/set-timeout.ts"
+      "<rootDir>/test/set-timeout.ts",
+      "<rootDir>/test/enforce-assertions.ts"
     ],
     "testMatch": [
       "**/*.spec.[jt]s"
