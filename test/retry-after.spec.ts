@@ -33,7 +33,10 @@ describe("retry.after()", () => {
 		await expect(promise).rejects.toThrowError(error);
 	});
 
-	it("allows positive non-integer delays", () => {
+	test.each([
+		[ "positive non-integer", 42.17 ] as const,
+		[ "named (exponential)", "exponential" ] as const,
+	])("allows %s delays", (kind, delay) => {
 		let retried = false;
 
 		const promise = retryable((resolve, reject, retry) => {
@@ -41,7 +44,7 @@ describe("retry.after()", () => {
 				return resolve();
 
 			retried = true;
-			retry.after(42.17);
+			retry.after(delay);
 		});
 
 		return expect(promise).resolves.toBeUndefined();
