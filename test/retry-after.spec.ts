@@ -34,7 +34,9 @@ describe("retry.after()", () => {
 	});
 
 	test.each([
-		[ "positive non-integer", 42.17 ] as const,
+		[ "zero", 0 ] as const,
+		[ "positive", 42 ] as const,
+		[ "non-integer", 42.17 ] as const,
 		[ "named (exponential)", "exponential" ] as const,
 	])("allows %s delays", (kind, delay) => {
 		let retried = false;
