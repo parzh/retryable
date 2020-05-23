@@ -29,7 +29,7 @@ const RETRY_COUNT_DEFAULT = 0;
  *       retry();
  *
  *     else
- *       retry.after(2 ** retry.count * 100);
+ *       retry.after("exponential");
  *   });
  * });
  */

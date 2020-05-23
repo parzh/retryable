@@ -50,7 +50,7 @@ const content = await retryable((resolve, reject, retry) => {
 
     else
       // retrying after exponential backoff (see https://en.wikipedia.org/wiki/Exponential_backoff)
-      retry.after(2 ** retry.count * 100);
+      retry.after("exponential"); // same as: retry.after(2 ** retry.count * 100);
   });
 });
 ```
