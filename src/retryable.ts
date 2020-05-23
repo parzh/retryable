@@ -1,7 +1,10 @@
 import type Action from "./typings/action";
 import type Retryer from "./typings/retryer";
+import type { Delay, DelayNamed } from "./delays";
+
 import assertNatural from "./assert-natural.impl";
 import assertNonNegative from "./assert-non-negative.impl";
+import delays from "./delays";
 
 /** @private */
 type Maybe<Value> = Value | null;
@@ -86,8 +89,17 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			execute();
 		}
 
-		function retryAfter(msec: number): void {
+		function retryAfter(delay: Delay): void {
+			let msec: number;
+
+			if (delay in delays)
+				msec = delays[delay as DelayNamed](_retryCount);
+
+			else
+				msec = +delay;
+
 			assertNonNegative(msec, "retry delay");
+
 			_retryTimeoutId = setTimeout(retry, msec);
 		}
 
