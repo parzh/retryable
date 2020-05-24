@@ -1,26 +1,27 @@
 import retryable from "../src/retryable";
-import time, { TIMEOUT_MARGIN, WAIT_TIME } from "./helpers/time";
+import time, { TIMEOUT_MARGIN } from "./helpers/time";
 
-describe("retry.after()", () => {
-	it("allows retrying after a specified delay", async () => {
+describe("retry.after(msec)", () => {
+	test.each([
+		[ "zero", 0 ],
+		[ "positive", TIMEOUT_MARGIN ],
+		[ "non-integer", TIMEOUT_MARGIN - 0.1 ],
+	] as const)("allows %s delays", async (kind, delay) => {
 		let retried = false;
 
-		const finish = time() + time(WAIT_TIME);
+		const finish = time() + time(delay);
 
 		await retryable((resolve, reject, retry) => {
 			if (retried)
-				resolve();
+				return resolve();
 
-			else {
-				retried = true;
-
-				retry.after(WAIT_TIME);
-			}
+			retried = true;
+			retry.after(delay);
 		});
 
 		expect(time()).toBeCloseTo(finish);
 		expect(retried).toBe(true);
-	}, TIMEOUT_MARGIN + WAIT_TIME);
+	});
 
 	test.each([
 		[ "negative delays", -4, "is negative" ],
@@ -32,29 +33,10 @@ describe("retry.after()", () => {
 
 		await expect(promise).rejects.toThrowError(error);
 	});
-
-	test.each([
-		[ "zero", 0 ] as const,
-		[ "positive", 42 ] as const,
-		[ "non-integer", 42.17 ] as const,
-		[ "named (exponential)", "exponential" ] as const,
-	])("allows %s delays", (kind, delay) => {
-		let retried = false;
-
-		const promise = retryable((resolve, reject, retry) => {
-			if (retried)
-				return resolve();
-
-			retried = true;
-			retry.after(delay);
-		});
-
-		return expect(promise).resolves.toBeUndefined();
-	});
 });
 
-describe("named delays", () => {
-	it("properly delays retries if 'exponential' delay is provided", async () => {
+describe("retry.after(strategy)", () => {
+	it('"exponential" triggers exponential backoff', async () => {
 		const start = time();
 		const times: number[] = [];
 		const RETRY_LIMIT = 4;
