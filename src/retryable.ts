@@ -91,6 +91,18 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		// rough fix: TypeScript doesn't know about Object.definePropety
 		retry.count = _retryCount;
 
+		Object.defineProperty(retry, "count", {
+			get(): number {
+				return _retryCount;
+			},
+
+			set(): never {
+				return reject("Cannot set readonly `count`; use `retry.setCount()` instead") as never;
+			},
+		});
+
+		retry.setCount = resetRetryCount.bind(null, true);
+
 		function retryAfter(delay: Delay): void {
 			let msec: number;
 
@@ -110,20 +122,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 				clearTimeout(_retryTimeoutId);
 		}
 
-		Object.defineProperty(retry, "count", {
-			get(): number {
-				return _retryCount;
-			},
-
-			set(): never {
-				return reject("Cannot set readonly `count`; use `retry.setCount()` instead") as never;
-			},
-		});
-
 		retry.after = retryAfter;
-
-		retry.setCount = resetRetryCount.bind(null, true);
-
 		retry.cancel = retryCancel;
 
 		execute();
