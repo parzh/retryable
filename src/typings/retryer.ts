@@ -1,14 +1,11 @@
-// TODO: deprecate the whole separate '/typings' thing,
-// export types from main file as much as possible
+import type { Delay } from "../delays";
 
 export default interface Retryer {
 	(): void;
 
 	readonly count: number;
 
-	after(delay: import("../delays").Delay): void;
-
+	after(delay: Delay): void;
 	setCount(newValue: number): void;
-
 	cancel(): void;
 }
