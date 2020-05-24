@@ -1,5 +1,4 @@
 import type Action from "./typings/action";
-import type Retryer from "./typings/retryer";
 import type { Delay, DelayNamed } from "./delays";
 
 import assertNatural from "./assert-natural.impl";
@@ -74,7 +73,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 				reject,
 				// explicitly relying on hoisting here
 				// eslint-disable-next-line @typescript-eslint/no-use-before-define
-				retry as Retryer,
+				retry,
 
 				// arguments below are deprecated,
 				// left for backwards compatibility
@@ -88,6 +87,9 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			updateRetryCount();
 			execute();
 		}
+
+		// rough fix: TypeScript doesn't know about Object.definePropety
+		retry.count = _retryCount;
 
 		function retryAfter(delay: Delay): void {
 			let msec: number;
