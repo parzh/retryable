@@ -1,6 +1,6 @@
 import type Action from "./typings/action";
 import type Retryer from "./typings/retryer";
-import type { Delay } from "./delays";
+import type { RetryerProps } from "./typings/retryer";
 
 import assertNatural from "./assert-natural.impl";
 import assertNonNegative from "./assert-non-negative.impl";
@@ -37,16 +37,18 @@ const RETRY_COUNT_DEFAULT = 0;
  * });
  */
 export default function retryable<Value = unknown>(action: Action<Value>): Promise<Value> {
-	/** @private */
-	let _retryCount: number = RETRY_COUNT_DEFAULT;
-
-	/** @private */
-	let _nextRetryCount: Maybe<number>;
-
-	/** @private */
 	let _retryTimeoutId: Maybe<NodeJS.Timer>;
 
-	/** @private */
+	let _retryCount = RETRY_COUNT_DEFAULT;
+	let _nextRetryCount: Maybe<number>;
+
+	let _maxRetryCount = Infinity;
+	let _maxRetryCountSet = false; // set by user that is
+	let _onMaxRetryCountExceeded: Maybe<() => unknown>;
+
+	let _resolved = false;
+	let _rejected = false;
+
 	function updateRetryCount(): void {
 		if (_nextRetryCount != null) {
 			_retryCount = _nextRetryCount;
@@ -61,14 +63,34 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			retryCountExplicit = RETRY_COUNT_DEFAULT;
 
 		if (retryCountExplicit !== RETRY_COUNT_DEFAULT)
-			assertNatural(retryCountExplicit, "new value of retryCount");
+			assertNatural(retryCountExplicit, "new value of retry.count");
 
 		_nextRetryCount = retryCountExplicit;
 	}
 
-	return new Promise<Value>((resolve, reject) => {
+	return new Promise<Value>((res, rej) => {
+		const resolve: typeof res = (...args) => {
+			_resolved = true;
+			res(...args);
+		};
+
+		const reject: typeof rej = (...args) => {
+			_rejected = true;
+			rej(...args);
+		};
+
 		const retry: Retryer = Object.assign(() => {
 			updateRetryCount();
+
+			if (_retryCount > _maxRetryCount)
+				if (_onMaxRetryCountExceeded != null)
+					_onMaxRetryCountExceeded();
+
+				else
+					return reject(`Retry limit exceeded after ${ _maxRetryCount } retries (${ _maxRetryCount + 1 } attempts total)`);
+
+			if (_resolved || _rejected)
+				return;
 
 			// explicitly relying on hoisting here
 			// eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -78,7 +100,26 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 
 			setCount: resetRetryCount.bind(null, true),
 
-			after(delay: Delay): void {
+			setMaxCount(value, onExceeded?) {
+				if (_maxRetryCountSet)
+					return; // ignore subsequent calls
+
+				assertNatural(value, "max value of retry.count");
+
+				_maxRetryCount = value;
+				_maxRetryCountSet = true;
+
+				if (onExceeded == null)
+					return;
+
+				if (onExceeded === "resolve")
+					_onMaxRetryCountExceeded = resolve;
+
+				else if (onExceeded !== "reject")
+					_onMaxRetryCountExceeded = onExceeded;
+			},
+
+			after(delay) {
 				let msec: number;
 
 				if (isNamed(delay))
@@ -92,11 +133,11 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 				_retryTimeoutId = setTimeout(retry, msec);
 			},
 
-			cancel(): void {
+			cancel() {
 				if (_retryTimeoutId != null)
 					clearTimeout(_retryTimeoutId);
 			},
-		});
+		} as RetryerProps);
 
 		Object.defineProperty(retry, "count", {
 			get(): number {

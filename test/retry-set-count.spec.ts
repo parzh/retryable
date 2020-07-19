@@ -4,7 +4,7 @@ import retryable from "../src/retryable";
 const RETRIES_BEFORE_RESET = 5;
 
 describe("retry.setCount()", () => {
-	it("allows explicitly seting the value of retry count", async () => {
+	it("should allow explicitly setting the value of retry count", async () => {
 		let didReset = false;
 
 		const lastRetryCount = await retryable<number>((resolve, reject, retry) => {
@@ -29,7 +29,7 @@ describe("retry.setCount()", () => {
 		[ "negative numbers", -4, "is negative" ],
 		[ "non-integers", 42.17, "not an integer" ],
 		[ "NaNs", NaN, "is not a number" ],
-	])("forbids %s", async (name, count, error) => {
+	])("should forbid %s", async (name, count, error) => {
 		const promise = retryable((resolve, reject, retry) => {
 			retry.setCount(count);
 		});
@@ -39,5 +39,5 @@ describe("retry.setCount()", () => {
 });
 
 describe("resetRetryCount()", () => {
-	it.todo("is deprecated in favor of `retry.setCount(0)`");
+	it.todo("deprecated in favor of `retry.setCount(0)`");
 });

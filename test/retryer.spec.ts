@@ -1,7 +1,7 @@
 import retryable from "../src/retryable";
 
 describe("retry()", () => {
-	it("allows retrying the action", async () => {
+	it("should allow retrying the action", async () => {
 		let status: "initial" | "retried" | "resolved" | "rejected" = "initial";
 
 		await retryable((resolve, reject, retry) => {
