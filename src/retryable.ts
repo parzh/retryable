@@ -56,8 +56,8 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 	}
 
 	function resetRetryCount(argumentRequired: boolean, retryCountExplicit = RETRY_COUNT_DEFAULT): void {
-		if (!argumentRequired)
-			retryCountExplicit = retryCountExplicit ?? RETRY_COUNT_DEFAULT;
+		if (!argumentRequired && retryCountExplicit == null)
+			retryCountExplicit = RETRY_COUNT_DEFAULT;
 
 		if (retryCountExplicit !== RETRY_COUNT_DEFAULT)
 			assertNatural(retryCountExplicit, "new value of retryCount");
