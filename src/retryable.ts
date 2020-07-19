@@ -104,6 +104,8 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 				if (_maxRetryCountSet)
 					return; // ignore subsequent calls
 
+				assertNatural(value, "max value of retry.count");
+
 				_maxRetryCount = value;
 				_maxRetryCountSet = true;
 
