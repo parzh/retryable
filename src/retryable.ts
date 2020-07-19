@@ -83,7 +83,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			updateRetryCount();
 
 			if (_retryCount > _maxRetryCount)
-				if (_onMaxRetryCountExceeded)
+				if (_onMaxRetryCountExceeded != null)
 					_onMaxRetryCountExceeded();
 
 				else
