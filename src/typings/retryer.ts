@@ -1,8 +1,6 @@
 import type { Delay } from "../delays";
 
-export default interface Retryer {
-	(): void;
-
+export interface RetryerProps {
 	/**
 	 * Readonly number of retries that occurred so far.
 	 * Always 1 less than the number of total attempts.
@@ -57,4 +55,8 @@ export default interface Retryer {
 	 * retry.cancel();
 	 */
 	cancel(): void;
+}
+
+export default interface Retryer extends RetryerProps {
+	(): void;
 }

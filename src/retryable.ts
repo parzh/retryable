@@ -1,6 +1,6 @@
 import type Action from "./typings/action";
 import type Retryer from "./typings/retryer";
-import type { Delay } from "./delays";
+import type { RetryerProps } from "./typings/retryer";
 
 import assertNatural from "./assert-natural.impl";
 import assertNonNegative from "./assert-non-negative.impl";
@@ -78,7 +78,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 
 			setCount: resetRetryCount.bind(null, true),
 
-			after(delay: Delay): void {
+			after(delay) {
 				let msec: number;
 
 				if (isNamed(delay))
@@ -92,11 +92,11 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 				_retryTimeoutId = setTimeout(retry, msec);
 			},
 
-			cancel(): void {
+			cancel() {
 				if (_retryTimeoutId != null)
 					clearTimeout(_retryTimeoutId);
 			},
-		});
+		} as RetryerProps);
 
 		Object.defineProperty(retry, "count", {
 			get(): number {
