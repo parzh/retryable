@@ -6,7 +6,7 @@ describe("retry.after(msec)", () => {
 		[ "zero", 0 ],
 		[ "positive", TIMEOUT_MARGIN ],
 		[ "non-integer", TIMEOUT_MARGIN - 0.1 ],
-	] as const)("allows %s delays", async (kind, delay) => {
+	] as const)("should allow %s delays", async (kind, delay) => {
 		let retried = false;
 
 		const finish = time() + time(delay);
@@ -26,7 +26,7 @@ describe("retry.after(msec)", () => {
 	test.each([
 		[ "negative delays", -4, "is negative" ],
 		[ "NaNs", NaN, "is not a number" ],
-	])("forbids %s", async (name, delay, error) => {
+	])("should forbid %s", async (name, delay, error) => {
 		const promise = retryable((resolve, reject, retry) => {
 			retry.after(delay);
 		});
@@ -35,8 +35,8 @@ describe("retry.after(msec)", () => {
 	});
 });
 
-describe("retry.after(strategy)", () => {
-	it('"exponential" triggers exponential backoff', async () => {
+describe('retry.after("exponential")', () => {
+	it("should trigger exponential backoff", async () => {
 		const start = time();
 		const times: number[] = [];
 		const RETRY_LIMIT = 4;

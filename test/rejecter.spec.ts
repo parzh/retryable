@@ -1,7 +1,7 @@
 import retryable from "../src/retryable";
 
 describe("reject()", () => {
-	it("works like Promise.reject()", async () => {
+	it("should work like Promise.reject()", async () => {
 		const promise = retryable((resolve, reject) => {
 			reject("Unexpected error");
 		});

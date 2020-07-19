@@ -1,7 +1,7 @@
 import retryable from "../src/retryable";
 
 describe("resolve()", () => {
-	it("works like Promise.resolve()", async () => {
+	it("should work like Promise.resolve()", async () => {
 		const value = await retryable((resolve) => {
 			resolve(42);
 		});
