@@ -39,7 +39,7 @@ const RETRY_COUNT_DEFAULT = 0;
 export default function retryable<Value = unknown>(action: Action<Value>): Promise<Value> {
 	let _retryTimeoutId: Maybe<NodeJS.Timer>;
 
-	let _retryCount: number = RETRY_COUNT_DEFAULT;
+	let _retryCount = RETRY_COUNT_DEFAULT;
 	let _nextRetryCount: Maybe<number>;
 
 	let _maxRetryCount = Infinity;
