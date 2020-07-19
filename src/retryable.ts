@@ -6,7 +6,7 @@ import assertNonNegative from "./assert-non-negative.impl";
 import delays from "./delays";
 
 /** @private */
-type Maybe<Value> = Value | null;
+type Maybe<Value> = Value | null | undefined;
 
 /** @private */
 const RETRY_COUNT_DEFAULT = 0;
@@ -40,10 +40,10 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 	let _retryCount: number = RETRY_COUNT_DEFAULT;
 
 	/** @private */
-	let _nextRetryCount: Maybe<number> = null;
+	let _nextRetryCount: Maybe<number>;
 
 	/** @private */
-	let _retryTimeoutId: Maybe<NodeJS.Timer> = null;
+	let _retryTimeoutId: Maybe<NodeJS.Timer>;
 
 	/** @private */
 	function updateRetryCount(): void {
