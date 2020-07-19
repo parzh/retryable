@@ -88,7 +88,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			execute();
 		}
 
-		// rough fix: TypeScript doesn't know about Object.definePropety
+		// rough fix: TypeScript doesn't know about Object.defineProperty
 		retry.count = _retryCount;
 
 		Object.defineProperty(retry, "count", {
