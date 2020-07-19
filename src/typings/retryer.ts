@@ -8,9 +8,9 @@ export default interface Retryer {
 	 * Always 1 less than the number of total attempts.
 	 * @example
 	 * console.log(retry.count);
-	 * // [iteration #1] logs 0
-	 * // [iteration #2] logs 1
-	 * // [iteration #3] logs 2
+	 * // [attempt #1] logs 0
+	 * // [attempt #2] logs 1
+	 * // [attempt #3] logs 2
 	 * // ...
 	 *
 	 * retry();
@@ -18,14 +18,14 @@ export default interface Retryer {
 	readonly count: number;
 
 	/**
-	 * Set value of `retry.count` for the next iteration
+	 * Set value of `retry.count` for the next attempt
 	 * @example
 	 * retry.setCount(42);
 	 *
 	 * console.log(retry.count);
-	 * // [iteration #1] logs 0
-	 * // [iteration #2] logs 42
-	 * // [iteration #3] logs 42
+	 * // [attempt #1] logs 0
+	 * // [attempt #2] logs 42
+	 * // [attempt #3] logs 42
 	 * // ...
 	 *
 	 * retry();
