@@ -63,7 +63,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			retryCountExplicit = RETRY_COUNT_DEFAULT;
 
 		if (retryCountExplicit !== RETRY_COUNT_DEFAULT)
-			assertNatural(retryCountExplicit, "new value of retryCount");
+			assertNatural(retryCountExplicit, "new value of retry.count");
 
 		_nextRetryCount = retryCountExplicit;
 	}
