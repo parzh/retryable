@@ -1,27 +1,24 @@
 import retryable from "../src/retryable";
 
 describe("retry.count", () => {
-	it("provides current number of retries so far", async () => {
-		const TARGET_VALUE = 10;
-
-		let value = 0;
+	it("should provide current number of retries so far", async () => {
+		const ATTEMPTS = 10;
+		const counts: number[] = [];
 
 		await retryable((resolve, reject, retry) => {
-			expect(retry.count).toEqual(value);
+			counts.push(retry.count);
 
-			value++;
-
-			if (value < TARGET_VALUE)
+			if (counts.length < ATTEMPTS)
 				retry();
 
 			else
 				resolve();
 		});
 
-		expect(value).toEqual(TARGET_VALUE);
+		expect(counts).toStrictEqual([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]);
 	});
 
-	it("is a readonly value", () => {
+	it("should be readonly", () => {
 		const promise = retryable((resolve, reject, retry) => {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 			// @ts-ignore
@@ -33,5 +30,5 @@ describe("retry.count", () => {
 });
 
 describe("retryCount", () => {
-	it.todo("is deprecated in favor of `retry.count`");
+	it.todo("deprecated in favor of `retry.count`");
 });

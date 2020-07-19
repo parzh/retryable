@@ -1,6 +1,6 @@
 {
   "name": "@parzh/retryable",
-  "version": "1.5.3",
+  "version": "1.6.0",
   "description": "Convenience function to retry an action",
   "author": "Dima Parzhitsky <parzhitsky@gmail.com>",
   "license": "MIT",
@@ -45,7 +45,7 @@
     "transform": {
       "\\.ts$": "ts-jest"
     },
-    "restoreMocks": true,
+    "resetMocks": true,
     "errorOnDeprecated": true,
     "cacheDirectory": "<rootDir>/.cache/jest"
   },

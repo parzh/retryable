@@ -1,14 +1,14 @@
 import retryable = require("../src");
-import TypeOf from "./helpers/typeof.type";
+import type TypeOf from "./helpers/typeof.type";
 
 describe('import retryable = require("@parzh/retryable")', () => {
-	it("imports the whole module", () => {
+	it("should import the whole module", () => {
 		expect(retryable).toHaveProperty("retryable");
 		expect(retryable).toHaveProperty("wait");
 		expect(retryable).toHaveProperty("default");
 	});
 
-	it("is callable (delegates to the `retryable` function)", async () => {
+	it("should be callable (delegate to the `retryable` function)", async () => {
 		expect(typeof retryable).toBe<TypeOf>("function");
 
 		const value = await retryable<42>((resolve) => {
@@ -18,5 +18,5 @@ describe('import retryable = require("@parzh/retryable")', () => {
 		expect(value).toBe(42);
 	});
 
-	it.todo("and looks ugly, but that works without tests");
+	it.todo("looks ugly, but that works without tests");
 });
