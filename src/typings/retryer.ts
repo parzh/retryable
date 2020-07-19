@@ -39,11 +39,11 @@ export interface RetryerProps {
 	 * @example
 	 * retry.setMaxCount(0);
 	 * retry.setMaxCount(0, "reject");
-	 * // [attempt #1] reject with "Max retry count exceeded …"
+	 * // [attempt #1] reject with "Retry limit exceeded …"
 	 *
 	 * retry.setMaxCount(1);
 	 * // [attempt #1] retry
-	 * // [attempt #2] reject with "Max retry count exceeded …"
+	 * // [attempt #2] reject with "Retry limit exceeded …"
 	 *
 	 * retry.setMaxCount(1, "resolve");
 	 * retry.setMaxCount(1, resolve);
