@@ -1,5 +1,5 @@
 /**
- * Сreate a promise that resolves after a given number of milliseconds
+ * Create a promise that resolves after a given number of milliseconds
  * @param {number} msec
  */
 export default function wait(msec: number): Promise<void> {

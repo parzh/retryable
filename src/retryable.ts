@@ -1,13 +1,13 @@
 import type Action from "./typings/action";
 import type Retryer from "./typings/retryer";
-import type { Delay, DelayNamed } from "./delays";
+import type { Delay } from "./delays";
 
 import assertNatural from "./assert-natural.impl";
 import assertNonNegative from "./assert-non-negative.impl";
-import delays from "./delays";
+import delays, { isNamed } from "./delays";
 
 /** @private */
-type Maybe<Value> = Value | null;
+type Maybe<Value> = Value | null | undefined;
 
 /** @private */
 const RETRY_COUNT_DEFAULT = 0;
@@ -41,10 +41,10 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 	let _retryCount: number = RETRY_COUNT_DEFAULT;
 
 	/** @private */
-	let _nextRetryCount: Maybe<number> = null;
+	let _nextRetryCount: Maybe<number>;
 
 	/** @private */
-	let _retryTimeoutId: Maybe<NodeJS.Timer> = null;
+	let _retryTimeoutId: Maybe<NodeJS.Timer>;
 
 	/** @private */
 	function updateRetryCount(): void {
@@ -57,8 +57,8 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 	}
 
 	function resetRetryCount(argumentRequired: boolean, retryCountExplicit = RETRY_COUNT_DEFAULT): void {
-		if (!argumentRequired)
-			retryCountExplicit = retryCountExplicit ?? RETRY_COUNT_DEFAULT;
+		if (!argumentRequired && retryCountExplicit == null)
+			retryCountExplicit = RETRY_COUNT_DEFAULT;
 
 		if (retryCountExplicit !== RETRY_COUNT_DEFAULT)
 			assertNatural(retryCountExplicit, "new value of retryCount");
@@ -67,46 +67,36 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 	}
 
 	return new Promise<Value>((resolve, reject) => {
-		/** @private */
-		function execute(): void {
-			action(
-				resolve,
-				reject,
-				// explicitly relying on hoisting here
-				// eslint-disable-next-line @typescript-eslint/no-use-before-define
-				retry as Retryer,
-
-				// arguments below are deprecated,
-				// left for backwards compatibility
-
-				_retryCount,
-				resetRetryCount.bind(null, false),
-			);
-		}
-
-		function retry(): void {
+		const retry: Retryer = Object.assign(() => {
 			updateRetryCount();
+
+			// explicitly relying on hoisting here
+			// eslint-disable-next-line @typescript-eslint/no-use-before-define
 			execute();
-		}
+		}, {
+			count: _retryCount, // temporary
 
-		function retryAfter(delay: Delay): void {
-			let msec: number;
+			setCount: resetRetryCount.bind(null, true),
 
-			if (delay in delays)
-				msec = delays[delay as DelayNamed](_retryCount);
+			after(delay: Delay): void {
+				let msec: number;
 
-			else
-				msec = +delay;
+				if (isNamed(delay))
+					msec = delays[delay](_retryCount);
 
-			assertNonNegative(msec, "retry delay");
+				else
+					msec = +delay;
 
-			_retryTimeoutId = setTimeout(retry, msec);
-		}
+				assertNonNegative(msec, "retry delay");
 
-		function retryCancel(): void {
-			if (_retryTimeoutId != null)
-				clearTimeout(_retryTimeoutId);
-		}
+				_retryTimeoutId = setTimeout(retry, msec);
+			},
+
+			cancel(): void {
+				if (_retryTimeoutId != null)
+					clearTimeout(_retryTimeoutId);
+			},
+		});
 
 		Object.defineProperty(retry, "count", {
 			get(): number {
@@ -118,11 +108,19 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			},
 		});
 
-		retry.after = retryAfter;
+		function execute(): void {
+			action(
+				resolve,
+				reject,
+				retry,
 
-		retry.setCount = resetRetryCount.bind(null, true);
+				// arguments below are deprecated,
+				// left for backwards compatibility
 
-		retry.cancel = retryCancel;
+				_retryCount,
+				resetRetryCount.bind(null, false),
+			);
+		}
 
 		execute();
 	});
