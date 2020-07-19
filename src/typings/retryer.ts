@@ -37,6 +37,8 @@ export interface RetryerProps {
 	 * @param value Value of `retry.count`
 	 * @param onExceeded (defaults to `"reject"`) Limit exceed action
 	 * @example
+	 * // (assuming that every attempt ends with retry)
+	 *
 	 * retry.setMaxCount(0);
 	 * retry.setMaxCount(0, "reject");
 	 * // [attempt #1] reject with "Retry limit exceeded …"
