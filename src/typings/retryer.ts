@@ -53,7 +53,7 @@ export default interface Retryer {
 	/**
 	 * Cancel the delayed retry
 	 * @example
-	 * retry.after(1000); // doesn't work
+	 * retry.after(1000); // won't retry
 	 * retry.cancel();
 	 */
 	cancel(): void;
