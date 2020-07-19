@@ -1,4 +1,5 @@
 import type Action from "./typings/action";
+import type Retryer from "./typings/retryer";
 import type { Delay } from "./delays";
 
 import assertNatural from "./assert-natural.impl";
@@ -66,30 +67,36 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 	}
 
 	return new Promise<Value>((resolve, reject) => {
-		/** @private */
-		function execute(): void {
-			action(
-				resolve,
-				reject,
-				// explicitly relying on hoisting here
-				// eslint-disable-next-line @typescript-eslint/no-use-before-define
-				retry,
-
-				// arguments below are deprecated,
-				// left for backwards compatibility
-
-				_retryCount,
-				resetRetryCount.bind(null, false),
-			);
-		}
-
-		function retry(): void {
+		const retry: Retryer = Object.assign(() => {
 			updateRetryCount();
-			execute();
-		}
 
-		// rough fix: TypeScript doesn't know about Object.defineProperty
-		retry.count = _retryCount;
+			// explicitly relying on hoisting here
+			// eslint-disable-next-line @typescript-eslint/no-use-before-define
+			execute();
+		}, {
+			count: _retryCount, // temporary
+
+			setCount: resetRetryCount.bind(null, true),
+
+			after(delay: Delay): void {
+				let msec: number;
+
+				if (isNamed(delay))
+					msec = delays[delay](_retryCount);
+
+				else
+					msec = +delay;
+
+				assertNonNegative(msec, "retry delay");
+
+				_retryTimeoutId = setTimeout(retry, msec);
+			},
+
+			cancel(): void {
+				if (_retryTimeoutId != null)
+					clearTimeout(_retryTimeoutId);
+			},
+		});
 
 		Object.defineProperty(retry, "count", {
 			get(): number {
@@ -101,29 +108,19 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			},
 		});
 
-		retry.setCount = resetRetryCount.bind(null, true);
+		function execute(): void {
+			action(
+				resolve,
+				reject,
+				retry,
 
-		function retryAfter(delay: Delay): void {
-			let msec: number;
+				// arguments below are deprecated,
+				// left for backwards compatibility
 
-			if (isNamed(delay))
-				msec = delays[delay](_retryCount);
-
-			else
-				msec = +delay;
-
-			assertNonNegative(msec, "retry delay");
-
-			_retryTimeoutId = setTimeout(retry, msec);
+				_retryCount,
+				resetRetryCount.bind(null, false),
+			);
 		}
-
-		function retryCancel(): void {
-			if (_retryTimeoutId != null)
-				clearTimeout(_retryTimeoutId);
-		}
-
-		retry.after = retryAfter;
-		retry.cancel = retryCancel;
 
 		execute();
 	});
