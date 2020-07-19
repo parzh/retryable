@@ -1,20 +1,18 @@
 import retryable from "../src/retryable";
 import { TIMEOUT_MARGIN, WAIT_TIME, SECOND } from "./helpers/time";
 
+const action = jest.fn();
+
 describe("retry.cancel()", () => {
 	it("should allow cancelling delayed retry", async () => {
-		let value = 0;
-
 		await retryable((resolve, reject, retry) => {
-			if (value === 0)
-				setTimeout(resolve, SECOND);
-
-			value++
+			action();
 
 			retry.after(WAIT_TIME);
 			retry.cancel();
+			setTimeout(resolve, SECOND);
 		});
 
-		expect(value).toEqual(1);
+		expect(action).toHaveBeenCalledTimes(1);
 	}, TIMEOUT_MARGIN + SECOND)
 });

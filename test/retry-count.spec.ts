@@ -2,23 +2,20 @@ import retryable from "../src/retryable";
 
 describe("retry.count", () => {
 	it("should provide current number of retries so far", async () => {
-		const TARGET_VALUE = 10;
-
-		let value = 0;
+		const ATTEMPTS = 10;
+		const counts: number[] = [];
 
 		await retryable((resolve, reject, retry) => {
-			expect(retry.count).toEqual(value);
+			counts.push(retry.count);
 
-			value++;
-
-			if (value < TARGET_VALUE)
+			if (counts.length < ATTEMPTS)
 				retry();
 
 			else
 				resolve();
 		});
 
-		expect(value).toEqual(TARGET_VALUE);
+		expect(counts).toStrictEqual([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]);
 	});
 
 	it("should be readonly", () => {
