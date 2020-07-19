@@ -37,16 +37,18 @@ const RETRY_COUNT_DEFAULT = 0;
  * });
  */
 export default function retryable<Value = unknown>(action: Action<Value>): Promise<Value> {
-	/** @private */
-	let _retryCount: number = RETRY_COUNT_DEFAULT;
-
-	/** @private */
-	let _nextRetryCount: Maybe<number>;
-
-	/** @private */
 	let _retryTimeoutId: Maybe<NodeJS.Timer>;
 
-	/** @private */
+	let _retryCount: number = RETRY_COUNT_DEFAULT;
+	let _nextRetryCount: Maybe<number>;
+
+	let _maxRetryCount = Infinity;
+	let _maxRetryCountSet = false; // set by user that is
+	let _onMaxRetryCountExceeded: Maybe<() => unknown>;
+
+	let _resolved = false;
+	let _rejected = false;
+
 	function updateRetryCount(): void {
 		if (_nextRetryCount != null) {
 			_retryCount = _nextRetryCount;
@@ -66,9 +68,29 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		_nextRetryCount = retryCountExplicit;
 	}
 
-	return new Promise<Value>((resolve, reject) => {
+	return new Promise<Value>((res, rej) => {
+		const resolve: typeof res = (...args) => {
+			_resolved = true;
+			res(...args);
+		};
+
+		const reject: typeof rej = (...args) => {
+			_rejected = true;
+			rej(...args);
+		};
+
 		const retry: Retryer = Object.assign(() => {
 			updateRetryCount();
+
+			if (_retryCount > _maxRetryCount)
+				if (_onMaxRetryCountExceeded)
+					_onMaxRetryCountExceeded();
+
+				else
+					return reject(`Retry limit exceeded after ${ _maxRetryCount } retries (${ _maxRetryCount + 1 } attempts total)`);
+
+			if (_resolved || _rejected)
+				return;
 
 			// explicitly relying on hoisting here
 			// eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -77,6 +99,23 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			count: _retryCount, // temporary
 
 			setCount: resetRetryCount.bind(null, true),
+
+			setMaxCount(value, onExceeded?) {
+				if (_maxRetryCountSet)
+					return; // ignore subsequent calls
+
+				_maxRetryCount = value;
+				_maxRetryCountSet = true;
+
+				if (onExceeded == null)
+					return;
+
+				if (onExceeded === "resolve")
+					_onMaxRetryCountExceeded = resolve;
+
+				else if (onExceeded !== "reject")
+					_onMaxRetryCountExceeded = onExceeded;
+			},
 
 			after(delay) {
 				let msec: number;

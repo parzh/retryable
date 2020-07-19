@@ -1,5 +1,7 @@
 import type { Delay } from "../delays";
 
+export type OnMaxRetryCountExceeded = "resolve" | "reject" | (() => unknown);
+
 export interface RetryerProps {
 	/**
 	 * Readonly number of retries that occurred so far.
@@ -29,6 +31,46 @@ export interface RetryerProps {
 	 * retry();
 	 */
 	setCount(newValue: number): void;
+
+	/**
+	 * Set upper limit for the value of `retry.count`
+	 * @param value Value of `retry.count`
+	 * @param onExceeded (defaults to `"reject"`) Limit exceed action
+	 * @example
+	 * retry.setMaxCount(0);
+	 * retry.setMaxCount(0, "reject");
+	 * // [attempt #1] reject with "Max retry count exceeded …"
+	 *
+	 * retry.setMaxCount(1);
+	 * // [attempt #1] retry
+	 * // [attempt #2] reject with "Max retry count exceeded …"
+	 *
+	 * retry.setMaxCount(1, "resolve");
+	 * retry.setMaxCount(1, resolve);
+	 * // [attempt #1] retry
+	 * // [attempt #2] resolve to `undefined`
+	 *
+	 * retry.setMaxCount(1, () => resolve(42));
+	 * // [attempt #1] retry
+	 * // [attempt #2] resolve to `42`
+	 *
+	 * retry.setMaxCount(1, () => retry.setCount(0));
+	 * // [attempt #1] retry
+	 * // [attempt #2] retry (update count)
+	 * // [attempt #3] retry
+	 * // [attempt #4] retry (update count)
+	 * // [attempt #5] retry
+	 * // ...
+	 *
+	 * retry.setMaxCount(1, () => retry.setCount(1));
+	 * // [attempt #1] retry
+	 * // [attempt #2] retry (update count)
+	 * // [attempt #3] retry (update count)
+	 * // [attempt #4] retry (update count)
+	 * // [attempt #5] retry (update count)
+	 * // ...
+	 */
+	setMaxCount(value: number, onExceeded?: OnMaxRetryCountExceeded): void;
 
 	/**
 	 * Delays retry(s) by a given strategy or timer
