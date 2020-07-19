@@ -45,7 +45,7 @@
     "transform": {
       "\\.ts$": "ts-jest"
     },
-    "restoreMocks": true,
+    "resetMocks": true,
     "errorOnDeprecated": true,
     "cacheDirectory": "<rootDir>/.cache/jest"
   },
