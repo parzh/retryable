@@ -37,8 +37,6 @@ const RETRY_COUNT_DEFAULT = 0;
  * });
  */
 export default function retryable<Value = unknown>(action: Action<Value>): Promise<Value> {
-	let _retryTimeoutId: Maybe<NodeJS.Timer>;
-
 	let _retryCount = RETRY_COUNT_DEFAULT;
 	let _nextRetryCount: Maybe<number>;
 
@@ -46,8 +44,8 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 	let _maxRetryCountSet = false; // set by user that is
 	let _onMaxRetryCountExceeded: Maybe<() => unknown>;
 
-	let _resolved = false;
-	let _rejected = false;
+	let _retryTimeoutId: Maybe<NodeJS.Timer>;
+	let _settled = false;
 
 	function updateRetryCount(): void {
 		if (_nextRetryCount != null) {
@@ -70,12 +68,12 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 
 	return new Promise<Value>((res, rej) => {
 		const resolve: typeof res = (...args) => {
-			_resolved = true;
+			_settled = true;
 			res(...args);
 		};
 
 		const reject: typeof rej = (...args) => {
-			_rejected = true;
+			_settled = true;
 			rej(...args);
 		};
 
@@ -89,7 +87,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 				else
 					return reject(`Retry limit exceeded after ${ _maxRetryCount } retries (${ _maxRetryCount + 1 } attempts total)`);
 
-			if (_resolved || _rejected)
+			if (_settled)
 				return;
 
 			// explicitly relying on hoisting here
