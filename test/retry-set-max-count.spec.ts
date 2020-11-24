@@ -55,4 +55,23 @@ describe("retry.setMaxCount()", () => {
 
 		expect(action).toHaveBeenCalledTimes(6);
 	});
+
+	it("should ignore subsequent invocations", async () => {
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const assertNaturalModule = require("../src/assert-natural.impl");
+
+		jest.spyOn(assertNaturalModule, "default");
+
+		await retryable((resolve, reject, retry) => {
+			retry.setMaxCount(42);
+			retry.setMaxCount(17); // ignored
+			retry.setMaxCount(56); // ignored
+			retry.setMaxCount(Infinity); // ignored
+			retry.setMaxCount(NaN); // ignored
+			resolve();
+		});
+
+		expect(assertNaturalModule.default).toHaveBeenNthCalledWith(1, 42, "max value of retry.count");
+		expect(assertNaturalModule.default).toHaveBeenCalledTimes(1);
+	});
 });
