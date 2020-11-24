@@ -37,8 +37,7 @@ describe("retry.after(msec)", () => {
 
 describe('retry.after("exponential")', () => {
 	it("should trigger exponential backoff", async () => {
-		const start = time();
-		const times: number[] = [];
+		const times = [ time() ];
 		const RETRY_LIMIT = 4;
 
 		await retryable((resolve, reject, retry) => {
@@ -50,12 +49,12 @@ describe('retry.after("exponential")', () => {
 			retry.after("exponential");
 		});
 
-		expect(times[0] - start).toBeCloseTo(time(0));
-		expect(times[1] - start).toBeCloseTo(time(0) + time(100));
-		expect(times[2] - start).toBeCloseTo(time(0) + time(100) + time(200));
-		expect(times[3] - start).toBeCloseTo(time(0) + time(100) + time(200) + time(400));
-		expect(times[4] - start).toBeCloseTo(time(0) + time(100) + time(200) + time(400) + time(800));
+		expect(times[1] - times[0]).toBeCloseTo(time(0));
+		expect(times[2] - times[1]).toBeCloseTo(time(100));
+		expect(times[3] - times[2]).toBeCloseTo(time(200));
+		expect(times[4] - times[3]).toBeCloseTo(time(400));
+		expect(times[5] - times[4]).toBeCloseTo(time(800));
 
-		expect(times).toHaveLength(5);
+		expect(times).toHaveLength(6);
 	}, TIMEOUT_MARGIN + 800 + 400 + 200 + 100);
 });
