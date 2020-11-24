@@ -37,34 +37,45 @@ const RETRY_COUNT_DEFAULT = 0;
  * });
  */
 export default function retryable<Value = unknown>(action: Action<Value>): Promise<Value> {
-	let _retryCount = RETRY_COUNT_DEFAULT;
-	let _nextRetryCount: Maybe<number>;
+	const retryCount = {
+		value: RETRY_COUNT_DEFAULT,
+		next: null as Maybe<number>,
 
-	let _maxRetryCount = Infinity;
-	let _maxRetryCountSet = false; // set by user that is
-	let _onMaxRetryCountExceeded: Maybe<() => unknown>;
+		updateValue(): void {
+			if (retryCount.next != null) {
+				retryCount.value = retryCount.next;
+				retryCount.next = null;
+			} else {
+				retryCount.value += 1;
+			}
+		},
+
+		setNext(newNext: number): void {
+			if (newNext !== RETRY_COUNT_DEFAULT)
+				assertNatural(newNext, "new value of retry.count");
+
+			retryCount.next = newNext;
+		},
+
+		/** @deprecated Use `retryCount.setNext(:number)` */
+		reset(count?: number): void {
+			retryCount.setNext(count ?? RETRY_COUNT_DEFAULT);
+		},
+
+		/** @namespace */
+		max: {
+			value: Infinity,
+			customized: false,
+			onExceeded: null as Maybe<() => unknown>,
+
+			get exceededMessage(): string {
+				return `Retry limit exceeded after ${ this.value } retries (${ this.value + 1 } attempts total)`;
+			},
+		},
+	};
 
 	let _retryTimeoutId: Maybe<NodeJS.Timer>;
 	let _settled = false;
-
-	function updateRetryCount(): void {
-		if (_nextRetryCount != null) {
-			_retryCount = _nextRetryCount;
-			_nextRetryCount = null;
-		} else {
-			_retryCount += 1;
-		}
-	}
-
-	function resetRetryCount(argumentRequired: boolean, retryCountExplicit = RETRY_COUNT_DEFAULT): void {
-		if (!argumentRequired && retryCountExplicit == null)
-			retryCountExplicit = RETRY_COUNT_DEFAULT;
-
-		if (retryCountExplicit !== RETRY_COUNT_DEFAULT)
-			assertNatural(retryCountExplicit, "new value of retry.count");
-
-		_nextRetryCount = retryCountExplicit;
-	}
 
 	return new Promise<Value>((res, rej) => {
 		const resolve: typeof res = (...args) => {
@@ -78,14 +89,14 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		};
 
 		const retry: Retryer = Object.assign(() => {
-			updateRetryCount();
+			retryCount.updateValue();
 
-			if (_retryCount > _maxRetryCount)
-				if (_onMaxRetryCountExceeded != null)
-					_onMaxRetryCountExceeded();
+			if (retryCount.value > retryCount.max.value)
+				if (retryCount.max.onExceeded != null)
+					retryCount.max.onExceeded();
 
 				else
-					return reject(`Retry limit exceeded after ${ _maxRetryCount } retries (${ _maxRetryCount + 1 } attempts total)`);
+					return reject(retryCount.max.exceededMessage);
 
 			if (_settled)
 				return;
@@ -94,34 +105,35 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 			// eslint-disable-next-line @typescript-eslint/no-use-before-define
 			execute();
 		}, {
-			count: _retryCount, // temporary
+			count: retryCount.value, // temporary
 
-			setCount: resetRetryCount.bind(null, true),
+			setCount: retryCount.setNext,
 
 			setMaxCount(value, onExceeded?) {
-				if (_maxRetryCountSet)
-					return; // ignore subsequent calls
+				// ignore subsequent calls
+				if (retryCount.max.customized)
+					return;
 
 				assertNatural(value, "max value of retry.count");
 
-				_maxRetryCount = value;
-				_maxRetryCountSet = true;
+				retryCount.max.value = value;
+				retryCount.max.customized = true;
 
-				if (onExceeded == null)
+				if (onExceeded == null || onExceeded === "reject")
 					return;
 
 				if (onExceeded === "resolve")
-					_onMaxRetryCountExceeded = resolve;
+					retryCount.max.onExceeded = resolve;
 
-				else if (onExceeded !== "reject")
-					_onMaxRetryCountExceeded = onExceeded;
+				else
+					retryCount.max.onExceeded = onExceeded;
 			},
 
 			after(delay) {
 				let msec: number;
 
 				if (isNamed(delay))
-					msec = delays[delay](_retryCount);
+					msec = delays[delay](retryCount.value);
 
 				else
 					msec = +delay;
@@ -139,7 +151,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 
 		Object.defineProperty(retry, "count", {
 			get(): number {
-				return _retryCount;
+				return retryCount.value;
 			},
 
 			set(): never {
@@ -156,8 +168,8 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 				// arguments below are deprecated,
 				// left for backwards compatibility
 
-				_retryCount,
-				resetRetryCount.bind(null, false),
+				retryCount.value,
+				retryCount.reset,
 			);
 		}
 
