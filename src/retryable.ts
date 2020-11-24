@@ -74,17 +74,17 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 		},
 	};
 
-	let _retryTimeoutId: Maybe<NodeJS.Timer>;
-	let _settled = false;
+	let retryTimeoutId: Maybe<NodeJS.Timer>;
+	let settled = false;
 
 	return new Promise<Value>((res, rej) => {
 		const resolve: typeof res = (...args) => {
-			_settled = true;
+			settled = true;
 			res(...args);
 		};
 
 		const reject: typeof rej = (...args) => {
-			_settled = true;
+			settled = true;
 			rej(...args);
 		};
 
@@ -98,7 +98,7 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 				else
 					return reject(retryCount.max.exceededMessage);
 
-			if (_settled)
+			if (settled)
 				return;
 
 			// explicitly relying on hoisting here
@@ -140,12 +140,12 @@ export default function retryable<Value = unknown>(action: Action<Value>): Promi
 
 				assertNonNegative(msec, "retry delay");
 
-				_retryTimeoutId = setTimeout(retry, msec);
+				retryTimeoutId = setTimeout(retry, msec);
 			},
 
 			cancel() {
-				if (_retryTimeoutId != null)
-					clearTimeout(_retryTimeoutId);
+				if (retryTimeoutId != null)
+					clearTimeout(retryTimeoutId);
 			},
 		} as RetryerProps);
 
