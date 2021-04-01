@@ -1,6 +1,7 @@
 # auxilliary stuff
 node_modules
 .cache
+.DS_Store
 
 # npm-published stuff
 dist
