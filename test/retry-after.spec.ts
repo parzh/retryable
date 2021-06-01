@@ -3,7 +3,7 @@ import time, { TIMEOUT_MARGIN } from "./helpers/time";
 
 declare global {
 	interface ObjectConstructor {
-		entries<Obj extends object, Key extends keyof Obj>(obj: Obj): [Key, Obj[Key]][];
+		entries<Obj extends NodeJS.Dict<unknown>, Key extends keyof Obj>(obj: Obj): [Key, Obj[Key]][];
 	}
 }
 
