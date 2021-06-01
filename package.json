@@ -29,23 +29,15 @@
   "types": "dist/index.d.ts",
   "jest": {
     "preset": "ts-jest",
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "tsconfig.test.json"
-      }
-    },
     "testEnvironment": "node",
     "verbose": true,
     "rootDir": ".",
-    "roots": [
-      "<rootDir>/test"
-    ],
     "setupFilesAfterEnv": [
       "<rootDir>/test/set-timeout.ts",
       "<rootDir>/test/enforce-assertions.ts"
     ],
     "testMatch": [
-      "**/*.spec.[jt]s"
+      "<rootDir>/{src,test}/**/*.{spec,test}.[jt]s"
     ],
     "transform": {
       "\\.ts$": "ts-jest"
@@ -55,8 +47,7 @@
     "cacheDirectory": "<rootDir>/.cache/jest",
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "<rootDir>/src/**/*.ts",
-      "!<rootDir>/{src,test}/**/*.{spec,test}.ts"
+      "<rootDir>/src/**/*.ts"
     ],
     "coverageDirectory": "coverage",
     "coverageReporters": [
