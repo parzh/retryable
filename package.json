@@ -1,6 +1,6 @@
 {
   "name": "@parzh/retryable",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "description": "Convenience function to retry an action",
   "author": "Dima Parzhitsky <parzhitsky@gmail.com>",
   "license": "MIT",
@@ -32,44 +32,59 @@
     "testEnvironment": "node",
     "verbose": true,
     "rootDir": ".",
-    "roots": [
-      "<rootDir>/test"
-    ],
     "setupFilesAfterEnv": [
       "<rootDir>/test/set-timeout.ts",
       "<rootDir>/test/enforce-assertions.ts"
     ],
     "testMatch": [
-      "**/*.spec.[jt]s"
+      "<rootDir>/**/*.{spec,test}.[jt]s"
     ],
     "transform": {
       "\\.ts$": "ts-jest"
     },
     "resetMocks": true,
     "errorOnDeprecated": true,
-    "cacheDirectory": "<rootDir>/.cache/jest"
+    "cacheDirectory": "<rootDir>/.cache/jest",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "<rootDir>/src/**/*.ts"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text",
+      "html"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    }
   },
   "scripts": {
     "test": "cross-env NODE_OPTIONS='--unhandled-rejections=strict' jest",
     "lint": "eslint --ext .ts src test",
     "clean": "rimraf dist/*",
     "prebuild": "npm run clean",
-    "build": "tsc --build src",
+    "build": "tsc --project tsconfig.build.json",
+    "postbuild": "rimraf dist/**/*.impl.d.ts dist/typings/**/*.js*",
     "prepublishOnly": "npm ci && npm run build && npm test"
   },
   "peerDependencies": {
     "typescript": ">=3.8"
   },
   "devDependencies": {
-    "@types/jest": "25.1.4",
-    "@types/node": "13.9.1",
-    "@typescript-eslint/eslint-plugin": "2.23.0",
-    "@typescript-eslint/parser": "2.23.0",
-    "cross-env": "7.0.2",
-    "eslint": "6.8.0",
-    "jest": "26.0.1",
+    "@types/jest": "26.0.23",
+    "@types/node": "15.6.1",
+    "@typescript-eslint/eslint-plugin": "4.26.0",
+    "@typescript-eslint/parser": "4.26.0",
+    "cross-env": "7.0.3",
+    "eslint": "7.27.0",
+    "jest": "27.0.3",
     "rimraf": "3.0.2",
-    "ts-jest": "26.0.0",
-    "typescript": "3.9.3"
+    "ts-jest": "27.0.2",
+    "typescript": "4.0.7"
   }
 }
