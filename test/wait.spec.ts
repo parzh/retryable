@@ -12,7 +12,7 @@ it("should resolve after the specified amount of time", async () => {
 it("should resolve immediately (asynchronously) if no time is provided", async () => {
 	const start = time();
 
-	// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
 	await wait();
 
