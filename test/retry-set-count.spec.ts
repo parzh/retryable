@@ -1,4 +1,5 @@
 import retryable from "../src/retryable";
+import { SECOND, TIMEOUT_MARGIN } from "./helpers/time";
 
 /** @private */
 const RETRIES_BEFORE_RESET = 5;
@@ -40,4 +41,19 @@ describe("retry.setCount()", () => {
 
 describe("resetRetryCount()", () => {
 	it.todo("deprecated in favor of `retry.setCount(0)`");
+
+	it("should not throw when called", () => {
+		const promise = Promise.all([
+			retryable((resolve, rej, ret, count, resetRetryCount) => {
+				resetRetryCount(100);
+				setTimeout(resolve, SECOND);
+			}),
+			retryable((resolve, rej, ret, count, resetRetryCount) => {
+				resetRetryCount();
+				setTimeout(resolve, SECOND);
+			}),
+		]);
+
+		return expect(promise).resolves.not.toThrow();
+	}, TIMEOUT_MARGIN + SECOND);
 });
