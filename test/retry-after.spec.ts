@@ -1,12 +1,20 @@
 import retryable from "../src/retryable";
 import time, { TIMEOUT_MARGIN } from "./helpers/time";
 
+declare global {
+	interface ObjectConstructor {
+		entries<Obj extends NodeJS.Dict<unknown>, Key extends keyof Obj>(obj: Obj): [Key, Obj[Key]][];
+	}
+}
+
 describe("retry.after(msec)", () => {
-	test.each([
-		[ "zero", 0 ],
-		[ "positive", TIMEOUT_MARGIN ],
-		[ "non-integer", TIMEOUT_MARGIN - 0.1 ],
-	] as const)("should allow %s delays", async (kind, delay) => {
+	const delays = {
+		zero: 0,
+		positive: 100,
+		'non-integer': 42.17,
+	} as const;
+
+	test.each(Object.entries(delays))("should allow %s delays", async (kind, delay) => {
 		let retried = false;
 
 		const finish = time() + time(delay);
@@ -21,7 +29,7 @@ describe("retry.after(msec)", () => {
 
 		expect(time()).toBeCloseTo(finish);
 		expect(retried).toBe(true);
-	});
+	}, delays.positive + TIMEOUT_MARGIN);
 
 	test.each([
 		[ "negative delays", -4, "is negative" ],

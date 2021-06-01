@@ -12,10 +12,10 @@ describe('import retryable from "@parzh/retryable"', () => {
 		expect(value).toBe(42);
 	});
 
-	it("should not import the whole module", () => {
-		expect(module_).not.toHaveProperty("retryable");
-		expect(module_).not.toHaveProperty("wait");
-		expect(module_).not.toHaveProperty("default");
+	it("should import the whole module", () => {
+		expect(module_).toHaveProperty("retryable");
+		expect(module_).toHaveProperty("wait");
+		expect(module_).toHaveProperty("default");
 	});
 });
 

@@ -20,7 +20,7 @@ describe("retry.count", () => {
 
 	it("should be readonly", () => {
 		const promise = retryable((resolve, reject, retry) => {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			retry.count = 42;
 		});
