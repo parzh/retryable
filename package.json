@@ -37,7 +37,7 @@
       "<rootDir>/test/enforce-assertions.ts"
     ],
     "testMatch": [
-      "<rootDir>/{src,test}/**/*.{spec,test}.[jt]s"
+      "<rootDir>/**/*.{spec,test}.[jt]s"
     ],
     "transform": {
       "\\.ts$": "ts-jest"
