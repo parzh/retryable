@@ -29,6 +29,11 @@
   "types": "dist/index.d.ts",
   "jest": {
     "preset": "ts-jest",
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.test.json"
+      }
+    },
     "testEnvironment": "node",
     "verbose": true,
     "rootDir": ".",
@@ -54,7 +59,7 @@
     "lint": "eslint --ext .ts src test",
     "clean": "rimraf dist/*",
     "prebuild": "npm run clean",
-    "build": "tsc --build src",
+    "build": "tsc --project tsconfig.build.json",
     "prepublishOnly": "npm ci && npm run build && npm test"
   },
   "peerDependencies": {

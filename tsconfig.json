@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "lib": [ "ES2015" ],
+    "target": "ES5",
+    "outDir": "dist",
+    "declaration": true,
+    "stripInternal": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+
+    "strict": true,
+    "noUnusedLocals": true,
+    "forceConsistentCasingInFileNames": true,
+  }
+}

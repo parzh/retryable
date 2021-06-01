@@ -1,6 +1,0 @@
-{
-	"extends": "../tsconfig-base",
-	"references": [
-		{ "path": "../src" }
-	]
-}
