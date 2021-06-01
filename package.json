@@ -52,7 +52,17 @@
     },
     "resetMocks": true,
     "errorOnDeprecated": true,
-    "cacheDirectory": "<rootDir>/.cache/jest"
+    "cacheDirectory": "<rootDir>/.cache/jest",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "<rootDir>/src/**/*.ts",
+      "!<rootDir>/{src,test}/**/*.{spec,test}.ts"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text",
+      "html"
+    ]
   },
   "scripts": {
     "test": "cross-env NODE_OPTIONS='--unhandled-rejections=strict' jest",
