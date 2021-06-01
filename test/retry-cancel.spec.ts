@@ -14,5 +14,16 @@ describe("retry.cancel()", () => {
 		});
 
 		expect(action).toHaveBeenCalledTimes(1);
-	}, TIMEOUT_MARGIN + SECOND)
+	}, TIMEOUT_MARGIN + SECOND);
+
+	it("should no-op when there's nothing to cancel", async () => {
+		await retryable((resolve, reject, retry) => {
+			action();
+
+			retry.cancel();
+			setTimeout(resolve, SECOND);
+		});
+
+		expect(action).toHaveBeenCalledTimes(1);
+	}, TIMEOUT_MARGIN + SECOND);
 });

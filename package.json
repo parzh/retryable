@@ -29,30 +29,39 @@
   "types": "dist/index.d.ts",
   "jest": {
     "preset": "ts-jest",
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "tsconfig.test.json"
-      }
-    },
     "testEnvironment": "node",
     "verbose": true,
     "rootDir": ".",
-    "roots": [
-      "<rootDir>/test"
-    ],
     "setupFilesAfterEnv": [
       "<rootDir>/test/set-timeout.ts",
       "<rootDir>/test/enforce-assertions.ts"
     ],
     "testMatch": [
-      "**/*.spec.[jt]s"
+      "<rootDir>/**/*.{spec,test}.[jt]s"
     ],
     "transform": {
       "\\.ts$": "ts-jest"
     },
     "resetMocks": true,
     "errorOnDeprecated": true,
-    "cacheDirectory": "<rootDir>/.cache/jest"
+    "cacheDirectory": "<rootDir>/.cache/jest",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "<rootDir>/src/**/*.ts"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text",
+      "html"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    }
   },
   "scripts": {
     "test": "cross-env NODE_OPTIONS='--unhandled-rejections=strict' jest",
